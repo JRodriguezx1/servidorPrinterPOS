@@ -19,6 +19,7 @@ interface PrintJob {
 
 export class printService implements IPrintService{
 
+    private bufferLog:PrintResponse[] = [];
     private queue: PrintJob[] = []; //[{ campo: funcion() }, {}...]
     private isPrinting = false;
     protected filePath:string = path.join(process.cwd(), 'temp');
@@ -26,15 +27,12 @@ export class printService implements IPrintService{
 
 
     async list(): Promise<any> {
-
         let printer = new ThermalPrinter({
             type: PrinterTypes.EPSON,  // O PrinterTypes.STAR
             interface: path.join(this.filePath, 'ticket.bin'), // El nombre en el Panel de Control
             characterSet: CharacterSet.PC852_LATIN2, // Configuración de acentos/eñes
             removeSpecialCharacters: false,
         });
-        //return printer;
-
 
         //Diseñamos el ticket 
         printer.alignCenter(); 
@@ -54,47 +52,50 @@ export class printService implements IPrintService{
         // Abrir el cajón monedero
         //printer.openCashDrawer();
 
-
-
         try {
             await fs.mkdir(this.filePath, {recursive:true}); // Si ya existe la carpeta, no pasa nada (gracias a recursive: true)
             await printer.execute();
             const ticketFile = path.join(this.filePath, 'ticket.bin');
             const printerPath = "\\\\localhost\\CAJA";
-
             await this.execPromise(`cmd /c copy /b "${ticketFile}" "${printerPath}"`);
-
         } catch (er) {
             console.log('Error crítico en el proceso de impresión>>', er);
         }
-
-        //const device = new USB(0x0471, 0x0055);
-        /*try {
-            const device = new USB(0x0471, 0x0055);
-            const dispositivos = escpos.USB.findPrinter();
-            console.log(dispositivos);
-            const list = dispositivos.map((device:any, index:number) => ({
-                    id: index,
-                    vendorId: device.deviceDescriptor.idVendor,
-                    productId: device.deviceDescriptor.idProduct,
-                    nombre: `Impresora POS ${index + 1}`,
-                    conectada: true
-            }));
-            return {
-                ok: true,
-                data: list
-            };
-        }catch (error) {
-            return {
-                ok: false,
-                data: [],
-                message: '❌ Error listando dispositivos: '+error
-            };
-        }*/
     }
 
-    async ticket1(): Promise<PrintResponse>{
 
+    //LISTAR TODAS LAS IMPRESORAS
+    public async listPrinter(): Promise<ListPrintersResponse> {
+        const {stdout} = await this.execPromise('powershell -Command "Get-CimInstance -ClassName Win32_Printer | Where-Object { $_.Shared -eq $true } | Select-Object Name, ShareName | ConvertTo-Json"');
+        //const printers = stdout.split('\n').map(p => p.trim()).filter(p => p && p !== 'Name');
+        let printer = JSON.parse(stdout);
+        if(typeof printer === 'object')
+            printer = [printer];
+        
+        return {
+                ok: false,
+                data: printer,
+                message: '❌ Error listando dispositivos: ',
+            };
+    }
+
+
+    //TEST DE IMPRESION
+    public async testPrinter(): Promise<PrintResponse>{
+        return this.bufferLog[0];
+    }
+
+
+    //VISUALIZAR ESTADO DE ULTIMA IMPRESION
+    public async viewLog():Promise<PrintResponse|null>{
+        if(this.bufferLog.length>0)
+            return this.bufferLog[0];
+        return null;
+    }
+
+
+
+    async ticket1(): Promise<PrintResponse>{
         return new Promise((resolve, reject)=>{
             this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
                 //Diseñamos el ticket 
@@ -114,8 +115,6 @@ export class printService implements IPrintService{
                 printer.cut();
             }, resolve, reject); //pasamos la promesa
         });
-        
-        
     }
 
 
@@ -161,23 +160,28 @@ export class printService implements IPrintService{
             await this.execPromise(`cmd /c copy /b "${ticketFile}" "${printerPath}"`);
             await fs.unlink(ticketFile);
 
-            // --- ÉXITO ---
-            job.resolve({  //Llamamos a la función resolve que guardamos antes y le pasamos PrintResponse
+            const res = {
                 ok: true,
                 jobId: job.id,
                 message: 'Impresión física completada',
                 timestamp: new Date()
-            });
+            }
+
+            // --- ÉXITO ---
+            job.resolve(res);  //Llamamos a la función resolve que guardamos antes y le pasamos PrintResponse
+            this.bufferLog[0] = res;
 
         } catch (er) {
             console.log('Error crítico en el proceso de impresión>>', er);
             await fs.unlink(ticketFile);
-                job.resolve({ // Resolvemos con ok: false para indicar fallo controlado
+            const res = {
                 ok: false,
                 jobId: job.id,
                 message: `Error: ${er}`,
                 timestamp: new Date()
-            });
+            }
+                job.reject(res); // Resolvemos con ok: false para indicar fallo controlado
+                this.bufferLog[0] = res;
         }
 
         this.isPrinting = false;
@@ -186,32 +190,13 @@ export class printService implements IPrintService{
     }
 
 
+    async openCashDrawer():Promise<boolean>{
+        return true;
+    }
 
     async printPOS(print: Print): Promise<any> {
 
-        /*const device = new escpos.USB(0x0471, 0x0055);
-        const printer = new escpos.Printer(device);
-        //const dispositivos = escpos.USB.findPrinter();
         
-        return new Promise((resolve, reject) => {
-
-            device.open((err: any) => {
-            if (err) {
-                return resolve({ ok: false, message: "Error abriendo impresora" });
-            }
-
-            printer
-                .align("ct")
-                .text("MI POS")
-                .drawLine()
-                .text("mi negocio")
-                .cut()
-                .close();
-
-            resolve({ ok: true });
-            });
-
-        });*/
        
     }
 }

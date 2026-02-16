@@ -12,8 +12,34 @@ export class printController {
         res.json(devices);
     }
 
+
+    static listPrinter = async(req:Request, res:Response)=>{
+        const list = await printerService.listPrinter();
+        res.json(list);
+    }
+
+    static testPrinter = async(req:Request, res:Response)=>{
+        const response = await printerService.testPrinter();
+        res.json(response);
+    }
+
+    static viewLog = async(req:Request, res:Response)=>{
+        const log = await printerService.viewLog();
+        res.json(log);
+    }
+
     static ticket1  = async(req:Request, res:Response)=>{
-        const response = await printerService.ticket1();
+        try {
+            const response = await printerService.ticket1();
+            res.json(response);
+        } catch (error) {
+            res.json(error);
+            console.log(error);
+        }
+    }
+
+    static openCashDrawer = async(req:Request, res:Response)=>{
+        const response = await printerService.openCashDrawer();
         res.json(response);
     }
 

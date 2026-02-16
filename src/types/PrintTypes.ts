@@ -40,7 +40,11 @@ interface IPrintRepository extends Repository<Print>{
 //interfaz del servicio
 interface IPrintService {
     list():Promise<ListPrintersResponse>,
+    listPrinter():Promise<ListPrintersResponse>;
+    testPrinter():Promise<PrintResponse>,
+    viewLog():Promise<PrintResponse|null>,
     ticket1():Promise<PrintResponse>,
+    openCashDrawer():Promise<boolean>
     printPOS(print: Print):Promise<any>,
 }
 
