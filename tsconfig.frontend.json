@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "ESNext",
+    "rootDir": "src/public/ts",
+    "outDir": "src/public/js",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "sourceMap": true
+  },
+  "include": ["src/public/ts/**/*.ts"],
+  "exclude": ["node_modules"]
+}

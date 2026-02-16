@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servidor J2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/build/css/tailwindapp.css">
+    <link rel="stylesheet" href="/build/css/style.css">
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased">
+    <header class="bg-slate-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-500 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold leading-tight">PrintBridge Node</h1>
+                    <p class="text-xs text-slate-400 font-mono italic">v1.0.0-stable</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 bg-slate-800 px-4 py-2 rounded-full border border-slate-700">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-sm font-medium">Servidor: 127.0.0.1:3000</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+            
+            <aside class="md:col-span-4 space-y-6">
+                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-5 bg-gray-50 border-b border-gray-200">
+                        <h2 class="font-bold text-gray-700 uppercase text-xs tracking-wider">Estado de Impresora</h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">Dispositivo Activo</label>
+                            <select class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5">
+                                <option selected italic>Buscando impresoras...</option>
+                                <option>POS-80 Series (USB)</option>
+                                <option>Impresora Térmica Cocina (IP)</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button class="flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-xl transition duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reconectar
+                            </button>
+                            <button class="flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-xl transition duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v4M7 9h10" />
+                                </svg>
+                                Test Page
+                            </button>
+                        </div>
+
+                        <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-emerald-800 font-medium">Estado de conexión:</span>
+                                <span class="bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded text-xs font-bold uppercase">Ready</span>
+                            </div>
+                        </div>
+
+                        <button class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition duration-200 transform active:scale-[0.98] shadow-md shadow-indigo-200">
+                            Imprimir Test de Conexión
+                        </button>
+                    </div>
+                </section>
+
+                <section class="bg-indigo-900 rounded-2xl p-6 text-white shadow-lg shadow-indigo-100">
+                    <h3 class="font-bold mb-2">Logs Rápidos</h3>
+                    <div class="bg-black/20 rounded-lg p-3 font-mono text-[10px] space-y-1 h-32 overflow-y-auto">
+                        <p class="text-gray-400 text-xs">[15:40] Server started...</p>
+                        <p class="text-emerald-400">[15:41] Printer connected on COM3</p>
+                        <p class="text-indigo-300">[15:42] GET /print-status 200</p>
+                    </div>
+                </section>
+            </aside>
+
+            <section class="md:col-span-8 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-5 border-b border-gray-100 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">Cola de Impresión</h2>
+                        <p class="text-sm text-gray-500">Monitoreo de tickets en tiempo real</p>
+                    </div>
+                    <button class="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline">
+                        Vaciar cola
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-400 uppercase bg-gray-50/50">
+                            <tr>
+                                <th class="px-6 py-4">Ticket</th>
+                                <th class="px-6 py-4">Cliente / Origen</th>
+                                <th class="px-6 py-4">Metodo</th>
+                                <th class="px-6 py-4 text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-indigo-50/30 transition-colors group">
+                                <td class="px-6 py-4 font-bold text-gray-700">#TRX-9901</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-gray-900 font-sans">Venta Mostrador</div>
+                                    <div class="text-xs text-gray-400">IP: 192.168.1.15</div>
+                                </td>
+                                <td class="px-6 py-4 font-mono text-xs">JSON -> ESC/POS</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Impreso
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-red-50/30 transition-colors group">
+                                <td class="px-6 py-4 font-bold text-gray-700">#TRX-9902</td>
+                                <td class="px-6 py-4 font-medium text-gray-900 italic">Pre-cuenta Mesa 4</td>
+                                <td class="px-6 py-4 font-mono text-xs">XML -> Raw</td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Error: No Paper
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="/build/js/index.js" defer></script>
+</body>
+</html>
