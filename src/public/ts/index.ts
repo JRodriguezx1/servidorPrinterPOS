@@ -12,19 +12,19 @@ interface printerPOS { Name:string, ShareName:string };
         const respuesta = await fetch(url); 
         const resultado = await respuesta.json();
         printPrinterPOS(resultado.data);
-        //console.log(resultado); 
     } catch (error) {
         console.log(error);
     }
-
-    function printPrinterPOS(printers:printerPOS[]){
-        console.log(printers);
-        printers.forEach(z=>{
-            console.log(z.Name);
-            /*console.log(z.ShareName);
-            const op = document.createElement('option');
-            op.textContent = z.ShareName;
-            selectPrinter.append(op);*/
-        });
-    }
 })();
+
+
+function printPrinterPOS(printers:printerPOS[]){
+    console.log(printers);
+    printers.forEach(z=>{
+        console.log(z.ShareName);
+        const op = document.createElement('option');
+        op.textContent = z.ShareName;
+        selectPrinter.append(op);
+    });
+}
+

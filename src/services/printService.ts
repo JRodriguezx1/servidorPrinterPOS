@@ -69,7 +69,7 @@ export class printService implements IPrintService{
         try {
             const {stdout} = await this.execPromise('powershell -Command "Get-CimInstance -ClassName Win32_Printer | Where-Object { $_.Shared -eq $true } | Select-Object Name, ShareName | ConvertTo-Json"');
             let printer = JSON.parse(stdout);
-            if(typeof printer === 'object')printer = [printer];
+            if(!Array.isArray(printer))printer = [printer];
             if(printer.length>0){
                 return {
                     ok: true,
