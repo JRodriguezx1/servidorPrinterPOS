@@ -66,17 +66,30 @@ export class printService implements IPrintService{
 
     //LISTAR TODAS LAS IMPRESORAS
     public async listPrinter(): Promise<ListPrintersResponse> {
-        const {stdout} = await this.execPromise('powershell -Command "Get-CimInstance -ClassName Win32_Printer | Where-Object { $_.Shared -eq $true } | Select-Object Name, ShareName | ConvertTo-Json"');
-        //const printers = stdout.split('\n').map(p => p.trim()).filter(p => p && p !== 'Name');
-        let printer = JSON.parse(stdout);
-        if(typeof printer === 'object')
-            printer = [printer];
-        
-        return {
+        try {
+            const {stdout} = await this.execPromise('powershell -Command "Get-CimInstance -ClassName Win32_Printer | Where-Object { $_.Shared -eq $true } | Select-Object Name, ShareName | ConvertTo-Json"');
+            let printer = JSON.parse(stdout);
+            if(typeof printer === 'object')printer = [printer];
+            if(printer.length>0){
+                return {
+                    ok: true,
+                    data: printer,
+                    message: 'Dispositivos compartidos: ',
+                };
+            }else{
+                return {
+                    ok: false,
+                    data: [],
+                    message: 'No hay dispositivos compartidos.',
+                };
+            }
+        } catch (error) {
+            return {
                 ok: false,
-                data: printer,
+                data: [],
                 message: '❌ Error listando dispositivos: ',
             };
+        }
     }
 
 

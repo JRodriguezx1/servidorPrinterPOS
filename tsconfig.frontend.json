@@ -3,7 +3,7 @@
     "target": "ES2021",
     "module": "ESNext",
     "rootDir": "src/public/ts",
-    "outDir": "src/public/js",
+    "outDir": "src/public/build/js",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "strict": true,
