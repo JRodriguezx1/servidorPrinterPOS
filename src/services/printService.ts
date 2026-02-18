@@ -94,8 +94,25 @@ export class printService implements IPrintService{
 
 
     //TEST DE IMPRESION
-    public async testPrinter(): Promise<PrintResponse>{
-        return this.bufferLog[0];
+    public async testPrinter(nameShare:string): Promise<PrintResponse>{
+        return new Promise((resolve, reject)=>{
+            this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
+                printer.alignCenter(); 
+                printer.bold(true);
+                printer.setTextSize(2, 2);
+                printer.println("PRUEBA DE IMPRESION\n"); 
+                printer.bold(false);
+                printer.setTextSize(1, 1);
+                printer.alignLeft();
+                printer.println("Servidor de impresion node - v1.0.0\n"); 
+                printer.drawLine(); 
+                printer.alignLeft(); 
+                printer.println("Test de impresion basico\n"); 
+                printer.newLine();
+                printer.println("J2 Software POS Multisucursal.\n"); 
+                printer.cut();
+            }, resolve, reject, nameShare); //pasamos la promesa
+        });
     }
 
 
@@ -110,7 +127,7 @@ export class printService implements IPrintService{
 
     async ticket1(): Promise<PrintResponse>{
         return new Promise((resolve, reject)=>{
-            this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
+            /*this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
                 //Diseñamos el ticket 
                 printer.alignCenter(); 
                 printer.bold(true);
@@ -126,13 +143,13 @@ export class printService implements IPrintService{
                 printer.newLine();
                 printer.println("Hamb. Doble $10.00\n"); 
                 printer.cut();
-            }, resolve, reject); //pasamos la promesa
+            }, resolve, reject);*/ //pasamos la promesa
         });
     }
 
 
     //Funcion para añadir a cola, addToQueue ahora acepta los callbacks de la promesa 3 parametros como funciones
-    private addToQueue(builder: (printer: ThermalPrinter)=>void, resolve: (value: PrintResponse)=>void, reject: (reason: any)=>void):PrintJob{
+    private addToQueue(builder: (printer: ThermalPrinter)=>void, resolve: (value: PrintResponse)=>void, reject: (reason: any)=>void, nameShare:string):PrintJob{
         const job:PrintJob = { 
             id: Date.now()+'', 
             build: builder,
@@ -140,12 +157,12 @@ export class printService implements IPrintService{
             reject 
         };
         this.queue.push(job); //en el campo build guarda funcion con el diseño del ticket y los callbacks de las promesas
-        this.processQueue();
+        this.processQueue(nameShare);
         return job;
     }
 
 
-    private async processQueue() {
+    private async processQueue(nameShare:string) {
 
         if (this.isPrinting || this.queue.length === 0) return;
         this.isPrinting = true;
@@ -157,17 +174,23 @@ export class printService implements IPrintService{
         }
 
         const ticketFile = path.join(this.filePath, `ticket-${job.id}.bin`);
-        const printerPath = "\\\\localhost\\CAJA";
+        const printerPath = "\\\\localhost\\"+nameShare;
 
         try {
             let printer = new ThermalPrinter({
                     type: PrinterTypes.EPSON,  // O PrinterTypes.STAR
-                    interface: path.join(this.filePath, `ticket-${job.id}.bin`), 
+                    interface: path.join(this.filePath, `ticket-${job.id}.bin`),   //comentar esta linea si se usa: buffer = printer.getBuffer();
                     characterSet: CharacterSet.PC852_LATIN2, // Configuración de acentos/eñes
                     removeSpecialCharacters: false,
                 });
 
             job.build(printer); //ejecuta la funcion guardada
+            /*const buffer = printer.getBuffer();
+            // 3. Enviar el Buffer al spooler vía PowerShell mediante STDIN
+            // Esto evita crear cualquier archivo en el disco.
+            await this.sendBufferToPrinter(buffer, printerPath);*/
+
+            //estas 4 lineas no van, si se activa el buffer anterior
             await fs.mkdir(this.filePath, {recursive:true}); // Si ya existe la carpeta, no pasa nada (gracias a recursive: true)
             await printer.execute();
             await this.execPromise(`cmd /c copy /b "${ticketFile}" "${printerPath}"`);
@@ -199,13 +222,34 @@ export class printService implements IPrintService{
 
         this.isPrinting = false;
         // 🔥 procesa siguiente automáticamente
-        this.processQueue();
+        this.processQueue(nameShare);
     }
 
 
     async openCashDrawer():Promise<boolean>{
         return true;
     }
+
+
+    /*private sendBufferToPrinter(buffer: Buffer, printerName: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            // Comando para que PowerShell reciba bytes de la entrada estándar y los mande a la impresora
+            const child = spawn('powershell', [
+                '-Command',
+                `$input | Out-Printer -Name "${printerName}"`
+            ]);
+
+            child.stdin.write(buffer);
+            child.stdin.end();
+
+            child.on('close', (code) => {
+                if (code === 0) resolve();
+                else reject(new Error(`PowerShell salió con código ${code}`));
+            });
+
+            child.on('error', (err) => reject(err));
+        });
+    }*/
 
     async printPOS(print: Print): Promise<any> {
 

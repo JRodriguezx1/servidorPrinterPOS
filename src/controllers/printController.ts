@@ -19,7 +19,9 @@ export class printController {
     }
 
     static testPrinter = async(req:Request, res:Response)=>{
-        const response = await printerService.testPrinter();
+        const {nameShare} = req.params;
+        if(Array.isArray(nameShare))return res.status(400).json({ message: "Nombre compartido inválido" });
+        const response = await printerService.testPrinter(nameShare);
         res.json(response);
     }
 

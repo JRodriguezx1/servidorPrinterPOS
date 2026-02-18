@@ -30,10 +30,10 @@ export class RouterApp {
             res.sendFile(publicPath+"/index.html");
         });
 
-        //Rutas user
+        //Rutas Print
         router.get('/api/printPOS/list', printController.list);
         router.get('/api/printPOS/listPrinter', printController.listPrinter);
-        router.get('/api/printPOS/testPrinter', printController.testPrinter);  //ruta visitada por el cliente local
+        router.get('/api/printPOS/testPrinter/:nameShare', printController.testPrinter);  //ruta visitada por el cliente local
         router.get('/api/printPOS/viewLog', printController.viewLog);  //ruta visitada por el cliente local
         router.get('/api/printPOS/ticket1', printController.ticket1);
         router.get('/api/printPOS/openCashDrawer', printController.openCashDrawer);

@@ -1,9 +1,8 @@
 
-
-console.log(12);
-
 const selectPrinter = document.querySelector('#selectPrinter') as HTMLSelectElement;
 const formSelectPrinter = document.querySelector('#formSelectPrinter') as HTMLFormElement;
+const logs = document.querySelector('#logs') as HTMLDivElement;
+
 
 interface printerPOS { Name:string, ShareName:string };
 
@@ -20,9 +19,7 @@ interface printerPOS { Name:string, ShareName:string };
 
 
 function printPrinterPOS(printers:printerPOS[]){
-    console.log(printers);
     printers.forEach(z=>{
-        console.log(z.ShareName);
         const op = document.createElement('option');
         op.textContent = z.ShareName;
         op.value = z.ShareName;
@@ -33,7 +30,31 @@ function printPrinterPOS(printers:printerPOS[]){
 
 formSelectPrinter.addEventListener('submit', (e:SubmitEvent)=>{
     e.preventDefault();
-    console.log((e.submitter as HTMLButtonElement).id);
-    const selectPrinter = formSelectPrinter.elements.namedItem("selectPrinter") as HTMLSelectElement;
-    console.log(selectPrinter.value);
+    const printerShare = formSelectPrinter.elements.namedItem("selectPrinter") as HTMLSelectElement;
+    if((e.submitter as HTMLButtonElement).id == "testPage")testPrint(printerShare.value);
 });
+
+const testPrint = async(printerShare:string):Promise<void>=>{
+    const url = "/api/printPOS/testPrinter/"+printerShare; //llamado a la API REST
+    const respuesta = await fetch(url);
+    const resultado = await respuesta.json();
+    console.log(resultado);
+    printLogs(resultado);
+}
+
+function printLogs(resultado:{ ok:boolean, jobId:string, message:string, timestamp:string }):void{
+    const ok_Text = document.createElement('p');
+    ok_Text.classList.add('text-gray-400', 'text-xs');
+    const jobId_Text = document.createElement('p');
+    jobId_Text.classList.add('text-indigo-300');
+    const message_Text = document.createElement('p');
+    message_Text.classList.add('text-emerald-400');
+    const timestamp_Text = document.createElement('p');
+    timestamp_Text.classList.add('text-gray-400', 'text-xs');
+    //while(logs.firstChild)logs.removeChild(logs.firstChild);
+    message_Text.textContent = resultado.message;
+    timestamp_Text.textContent = resultado.timestamp;
+    logs.append(message_Text);
+    logs.append(timestamp_Text);
+    logs.scrollTop = logs.scrollHeight;
+}
