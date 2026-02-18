@@ -3,6 +3,7 @@
 console.log(12);
 
 const selectPrinter = document.querySelector('#selectPrinter') as HTMLSelectElement;
+const formSelectPrinter = document.querySelector('#formSelectPrinter') as HTMLFormElement;
 
 interface printerPOS { Name:string, ShareName:string };
 
@@ -24,7 +25,15 @@ function printPrinterPOS(printers:printerPOS[]){
         console.log(z.ShareName);
         const op = document.createElement('option');
         op.textContent = z.ShareName;
+        op.value = z.ShareName;
         selectPrinter.append(op);
     });
 }
 
+
+formSelectPrinter.addEventListener('submit', (e:SubmitEvent)=>{
+    e.preventDefault();
+    console.log((e.submitter as HTMLButtonElement).id);
+    const selectPrinter = formSelectPrinter.elements.namedItem("selectPrinter") as HTMLSelectElement;
+    console.log(selectPrinter.value);
+});
