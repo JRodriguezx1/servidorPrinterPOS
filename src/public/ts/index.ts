@@ -1,4 +1,4 @@
-
+import { writeFile } from 'fs/promises';
 const selectPrinter = document.querySelector('#selectPrinter') as HTMLSelectElement;
 const formSelectPrinter = document.querySelector('#formSelectPrinter') as HTMLFormElement;
 const logs = document.querySelector('#logs') as HTMLDivElement;
@@ -35,11 +35,15 @@ formSelectPrinter.addEventListener('submit', (e:SubmitEvent)=>{
 });
 
 const testPrint = async(printerShare:string):Promise<void>=>{
-    const url = "/api/printPOS/testPrinter/"+printerShare; //llamado a la API REST
-    const respuesta = await fetch(url);
-    const resultado = await respuesta.json();
-    console.log(resultado);
+    try {
+        const url = "/api/printPOS/testPrinter/"+printerShare; //llamado a la API REST
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        console.log(resultado);
     printLogs(resultado);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function printLogs(resultado:{ ok:boolean, jobId:string, message:string, timestamp:string }):void{
@@ -57,4 +61,23 @@ function printLogs(resultado:{ ok:boolean, jobId:string, message:string, timesta
     logs.append(message_Text);
     logs.append(timestamp_Text);
     logs.scrollTop = logs.scrollHeight;
+}
+
+async function downloadLogo(){
+    try {
+        const url:string = "";
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Error al descargar imagen: ${response.statusText}`);
+        }
+        // Convertimos la respuesta a un buffer de Node.js
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        // Guardamos el archivo en la carpeta temporal
+        await writeFile('destPath', buffer);
+    } catch (error) {
+        console.error("Error en downloadLogo con fetch:", error);
+        throw error;
+    }
 }

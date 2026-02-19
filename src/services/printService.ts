@@ -194,7 +194,6 @@ export class printService implements IPrintService{
             await fs.mkdir(this.filePath, {recursive:true}); // Si ya existe la carpeta, no pasa nada (gracias a recursive: true)
             await printer.execute();
             await this.execPromise(`cmd /c copy /b "${ticketFile}" "${printerPath}"`);
-            await fs.unlink(ticketFile);
 
             const res = {
                 ok: true,
@@ -209,7 +208,6 @@ export class printService implements IPrintService{
 
         } catch (er) {
             console.log('Error crítico en el proceso de impresión>>', er);
-            await fs.unlink(ticketFile);
             const res = {
                 ok: false,
                 jobId: job.id,
@@ -218,18 +216,57 @@ export class printService implements IPrintService{
             }
                 job.reject(res); // Resolvemos con ok: false para indicar fallo controlado
                 this.bufferLog[0] = res;
-        }
-
-        this.isPrinting = false;
+        }finally{
+            try {
+                await fs.unlink(ticketFile);
+            } catch (er) { 
+            }
+            this.isPrinting = false;
         // 🔥 procesa siguiente automáticamente
         this.processQueue(nameShare);
+        }
+
     }
 
 
-    async openCashDrawer():Promise<boolean>{
-        return true;
+    async openCashDrawer(nameShare:string):Promise<boolean>{
+        let printer = new ThermalPrinter({
+            type: PrinterTypes.EPSON,  // O PrinterTypes.STAR
+            interface: path.join(this.filePath, 'openCashDrawer.bin'), // El nombre en el Panel de Control
+            characterSet: CharacterSet.PC852_LATIN2, // Configuración de acentos/eñes
+            removeSpecialCharacters: false,
+        });
+
+        // Abrir el cajón monedero
+        printer.openCashDrawer();
+        try {
+            await fs.mkdir(this.filePath, {recursive:true}); // Si ya existe la carpeta, no pasa nada (gracias a recursive: true)
+            await printer.execute();
+            const ticketFile = path.join(this.filePath, 'openCashDrawer.bin');
+            const printerPath = "\\\\localhost\\"+nameShare;
+            await this.execPromise(`cmd /c copy /b "${ticketFile}" "${printerPath}"`);
+            await fs.unlink(ticketFile);
+            return true;
+        } catch (er) {
+            console.log('Error crítico en el proceso de apertura del cajon monedero>>', er);
+            return false;
+        }
     }
 
+
+    protected async statushardware(nameShare:string):Promise<boolean>{
+        try {
+            const { stdout } = await this.execPromise(`powershell -Command "Get-Printer -Name '${nameShare}' | Select-Object -ExpandProperty PrinterStatus"`);
+            const status = stdout.trim();
+            if (status === 'Normal' || status === '3') { //lista para imprimir
+                return true;
+            }
+            return false;  //Offline/Desconocido
+        } catch (error) {
+            // Si el comando falla, usualmente es porque el nombre de la impresora no existe
+            return false; // La impresora ni siquiera existe o está offline
+        }
+    }
 
     /*private sendBufferToPrinter(buffer: Buffer, printerName: string): Promise<void> {
         return new Promise((resolve, reject) => {

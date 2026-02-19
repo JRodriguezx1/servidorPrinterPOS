@@ -41,7 +41,9 @@ export class printController {
     }
 
     static openCashDrawer = async(req:Request, res:Response)=>{
-        const response = await printerService.openCashDrawer();
+        const {nameShare} = req.params;
+        if(Array.isArray(nameShare))return res.status(400).json({ message: "Nombre compartido inválido" });
+        const response = await printerService.openCashDrawer(nameShare);
         res.json(response);
     }
 

@@ -44,7 +44,7 @@ interface IPrintService {
     testPrinter(nameShare:string):Promise<PrintResponse>,
     viewLog():Promise<PrintResponse|null>,
     ticket1():Promise<PrintResponse>,
-    openCashDrawer():Promise<boolean>
+    openCashDrawer(nameShare:string):Promise<boolean>
     printPOS(print: Print):Promise<any>,
 }
 
