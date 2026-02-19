@@ -254,17 +254,31 @@ export class printService implements IPrintService{
     }
 
 
-    protected async statushardware(nameShare:string):Promise<boolean>{
+    public async statushardware(nameShare:string):Promise<PrintResponse>{
         try {
             const { stdout } = await this.execPromise(`powershell -Command "Get-Printer -Name '${nameShare}' | Select-Object -ExpandProperty PrinterStatus"`);
             const status = stdout.trim();
             if (status === 'Normal' || status === '3') { //lista para imprimir
-                return true;
+                return {
+                    ok: true,
+                    jobId: '',
+                    message: `Lista para imprimir`,
+                    timestamp: new Date()
+                };
             }
-            return false;  //Offline/Desconocido
+            return {
+                ok: false,
+                jobId: '',
+                message: `Error: Offline/Desconocido`,
+                timestamp: new Date()
+            };
         } catch (error) {
-            // Si el comando falla, usualmente es porque el nombre de la impresora no existe
-            return false; // La impresora ni siquiera existe o está offline
+            return {
+                ok: false,
+                jobId: '',
+                message: `Error: La impresora ni siquiera existe o está offline`,
+                timestamp: new Date()
+            };
         }
     }
 

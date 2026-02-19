@@ -1,5 +1,5 @@
 import { printService } from "@services/printService";
-import { IPrintService, Print } from "types/PrintTypes";
+import { IPrintService, Print, PrintResponse } from 'types/PrintTypes';
 import { Request, Response } from "express";
 
 
@@ -44,6 +44,13 @@ export class printController {
         const {nameShare} = req.params;
         if(Array.isArray(nameShare))return res.status(400).json({ message: "Nombre compartido inválido" });
         const response = await printerService.openCashDrawer(nameShare);
+        res.json(response);
+    }
+
+    static statushardware = async(req:Request, res:Response)=>{
+        const {nameShare} = req.params;
+        if(Array.isArray(nameShare))return res.status(400).json({ message: "Nombre compartido inválido" });
+        const response:PrintResponse = await printerService.statushardware(nameShare);
         res.json(response);
     }
 

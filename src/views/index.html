@@ -73,11 +73,12 @@
                                     </svg>
                                     Reconectar
                                 </button>
-                                <button id="testPage" type="submit" class="flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-xl transition duration-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v4M7 9h10" />
+                                <button id="testhardware" type="submit" class="flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-xl transition duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-indigo-500"fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <rect x="9" y="9" width="6" height="6" rx="1" stroke-width="2"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v2M15 1v2M9 21v2M15 21v2M1 9h2M1 15h2M21 9h2M21 15h2"/>
                                     </svg>
-                                    Test Page
+                                    Test Hardware
                                 </button>
                             </div>
 
@@ -88,7 +89,10 @@
                                 </div>
                             </div>
 
-                            <button id="testConexion" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition duration-200 transform active:scale-[0.98] shadow-md shadow-indigo-200">
+                            <button id="testConexion" class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition duration-200 transform active:scale-[0.98] shadow-md shadow-indigo-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v4M7 9h10" />
+                                </svg>
                                 Imprimir Test de Conexión
                             </button>
                         </div>
@@ -98,9 +102,11 @@
                 <section class="bg-indigo-900 rounded-2xl p-6 text-white shadow-lg shadow-indigo-100">
                     <h3 class="font-bold mb-2">Logs Rápidos</h3>
                     <div id="logs" class="bg-black/20 rounded-lg p-3 font-mono text-[10px] space-y-1 h-32 overflow-y-auto">
-                        <p class="text-gray-400 text-xs">[15:40] Server started...</p>
-                        <p class="text-emerald-400">[15:41] Printer connected on COM3</p>
-                        <p class="text-indigo-300">[15:42] GET /print-status 200</p>
+                        <div>
+                            <p class="text-gray-400 text-xs">[15:40] Server started...</p>
+                            <p class="text-emerald-400">[15:41] Printer connected on COM3</p>
+                            <p class="text-indigo-300">[15:42] GET /print-status 200</p>
+                        </div>
                     </div>
                 </section>
             </aside>
@@ -111,9 +117,10 @@
                         <h2 class="text-lg font-bold text-gray-800">Cola de Impresión</h2>
                         <p class="text-sm text-gray-500">Monitoreo de tickets en tiempo real</p>
                     </div>
-                    <button class="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline">
-                        Vaciar cola
-                    </button>
+                    <div class="flex flex-col items-start">
+                        <button id="vaciarCola" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline">Vaciar cola</button>
+                        <button id="logo" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:underline">Logo</button>
+                    </div>
                 </div>
 
                 <div class="overflow-x-auto">

@@ -37,8 +37,12 @@ export class RouterApp {
         router.get('/api/printPOS/viewLog', printController.viewLog);  //ruta visitada por el cliente local
         router.get('/api/printPOS/ticket1', printController.ticket1);
         router.get('/api/printPOS/openCashDrawer/:nameShare', printController.openCashDrawer);
+        router.get('/api/printPOS/statushardware/:nameShare', printController.statushardware);
         router.post('/api/printPOS/printer', printController.printTicket);
         
+        //Rutas de archivos
+        router.get('/api/file/downloadFile', printController.list);
+
         //Rutas user
         router.post('/api/user/create', userController.createuser);
         router.get('/api/allusers', userController.allUsers);
