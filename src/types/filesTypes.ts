@@ -1,58 +1,19 @@
 import { Repository } from "./RepositoryTypes"
 
-//interfaz para imprimir la data
-interface Print {
-    titulo:string,
-    lineas: string[],
-    qr:string,
-    fecha:string,
-    subtotal:string,
-    total:string
-}
-
-//interfaz para obtener las impresoras "dispositivos"
-interface DevicePOS {
-    id: number;
-    vendorId: number;
-    productId: number;
-    nombre: string;
-    conectada: boolean;
-}
-interface ListPrintersResponse {
-    ok: boolean;
-    data: DevicePOS[];
-    message?: string;
-}
-interface PrintResponse {
-    ok: boolean;
-    jobId: string;
-    message: string;
-    timestamp: Date;
-}
 
 //------------------------------------------------------------------------------
 
 //interfaz del repositorio
-interface IPrintRepository extends Repository<Print>{
+/*interface IPrintRepository extends Repository<Print>{
     findPending(): Promise<Print[]>;
-}
+}*/
 
 //interfaz del servicio
-interface IPrintService {
-    list():Promise<ListPrintersResponse>,
-    listPrinter():Promise<ListPrintersResponse>;
-    testPrinter(nameShare:string):Promise<PrintResponse>,
-    viewLog():Promise<PrintResponse|null>,
-    ticket1():Promise<PrintResponse>,
-    openCashDrawer(nameShare:string):Promise<boolean>,
-    statushardware(nameShare:string):Promise<PrintResponse>,
-    printPOS(print: Print):Promise<any>,
+interface IFileService {
+    downloadFileLogo():Promise<boolean>,
 }
 
+
 export{
-    Print,
-    PrintResponse,
-    DevicePOS,
-    ListPrintersResponse,
-    IPrintService
+    IFileService
 }
