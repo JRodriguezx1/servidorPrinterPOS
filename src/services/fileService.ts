@@ -5,7 +5,7 @@ import { IFileService } from "types/filesTypes";
 export class fileService implements IFileService {
 
     public async downloadFileLogo(): Promise<boolean> {
-        const url:string = "https://roselilyatelier.j2softwarepos.com/admin/descarga/instruccionesimportarproductos";
+        const url:string = "https://demo.j2softwarepos.com/admin/descarga/logo";
          try {
             const response = await fetch(url);
             /*if (!response.ok) {
@@ -17,7 +17,7 @@ export class fileService implements IFileService {
             const buffer = Buffer.from(arrayBuffer);
             // Guardamos el archivo en la carpeta temporal
             await fs.mkdir(join(process.cwd(), "downloads"), { recursive: true });
-            const destPath = join(process.cwd(), "downloads", "archivo.png");
+            const destPath = join(process.cwd(), "downloads", "logo.png");
             await fs.writeFile(destPath, buffer);
             return true;
         } catch (error) {

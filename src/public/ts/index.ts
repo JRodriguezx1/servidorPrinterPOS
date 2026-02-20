@@ -4,6 +4,8 @@ const formSelectPrinter = document.querySelector('#formSelectPrinter') as HTMLFo
 const logs = document.querySelector('#logs') as HTMLDivElement;
 const vaciarCola = document.querySelector('#vaciarCola') as HTMLButtonElement;
 const logo = document.querySelector('#logo') as HTMLButtonElement;
+const iniciarSesion = document.querySelector('#iniciarSesion') as HTMLButtonElement;
+const miDialogoIniciarSesion = document.querySelector('#miDialogoIniciarSesion') as any;
 
 
 interface printerPOS { Name:string, ShareName:string };
@@ -95,21 +97,17 @@ logo.addEventListener('click', async()=>{
     }
 });
 
-/*async function downloadLogo(){
-    try {
-        const url:string = "";
-        const response = await fetch(url);
+document.addEventListener("click", cerrarDialogoExterno);
+iniciarSesion.addEventListener('click', ()=>{
+    
+    miDialogoIniciarSesion.showModal();
+});
 
-        if (!response.ok) {
-            throw new Error(`Error al descargar imagen: ${response.statusText}`);
-        }
-        // Convertimos la respuesta a un buffer de Node.js
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
-        // Guardamos el archivo en la carpeta temporal
-        await writeFile('destPath', buffer);
-    } catch (error) {
-        console.error("Error en downloadLogo con fetch:", error);
-        throw error;
+
+function cerrarDialogoExterno(event:Event) {
+      const f = event.target;
+      if (f=== miDialogoIniciarSesion || (f as HTMLButtonElement).id == 'btnXCerrarModalAbono' ) {
+        miDialogoIniciarSesion.close();
+       
+      }
     }
-}*/
