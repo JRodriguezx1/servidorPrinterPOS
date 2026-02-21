@@ -6,6 +6,7 @@ const vaciarCola = document.querySelector('#vaciarCola') as HTMLButtonElement;
 const logo = document.querySelector('#logo') as HTMLButtonElement;
 const iniciarSesion = document.querySelector('#iniciarSesion') as HTMLButtonElement;
 const miDialogoIniciarSesion = document.querySelector('#miDialogoIniciarSesion') as any;
+const formInicioSesion = document.querySelector('#formInicioSesion') as HTMLFormElement;
 
 
 interface printerPOS { Name:string, ShareName:string };
@@ -105,9 +106,9 @@ iniciarSesion.addEventListener('click', ()=>{
 
 
 function cerrarDialogoExterno(event:Event) {
-      const f = event.target;
-      if (f=== miDialogoIniciarSesion || (f as HTMLButtonElement).id == 'btnXCerrarModalAbono' ) {
+    const f = event.target;
+    if (f=== miDialogoIniciarSesion || (f as HTMLButtonElement).id == 'btnXCerrarModalAbono' ) {
         miDialogoIniciarSesion.close();
        
-      }
     }
+}

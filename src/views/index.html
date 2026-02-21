@@ -171,16 +171,49 @@
         </div>
     </main>
 
-    <dialog id="miDialogoIniciarSesion" class="w-[90%] max-w-lg border-0 rounded-md backdrop:bg-black/50 !p-12">
+    <dialog id="miDialogoIniciarSesion" class="w-[90%] max-w-lg border-0 rounded-md backdrop:bg-black/50 !p-8">
         <div class="flex items-start gap-3 mb-4">
             <div class="text-indigo-600 mt-1">
                 <i class="fas fa-user-circle text-4xl leading-[2.5rem]"></i> <!-- Ícono más grande -->
             </div>
             <div>
-                <h2 class="text-2xl font-semibold text-gray-900">Datos Factura Electrónica</h2>
-                <p class="text-lg text-gray-600">Ingresar datos del adquiriente</p>
+                <h2 class="text-2xl font-semibold text-gray-900">Iniciar Sesion</h2>
+                <p class="text-lg text-gray-600">Ingresar datos de la cuenta</p>
             </div>
         </div>
+
+        <form id="formInicioSesion" class="formulario">
+            <div class="border-b border-gray-900/10 pb-10 mb-3">
+                <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-8">
+
+                    <!-- Cuenta -->
+                    <div>
+                        <label for="business_name" class="block text-2xl font-medium text-gray-600">Cuenta</label>
+                        <div class="mt-2">
+                            <input id="business_name" type="text" name="business_name" required
+                                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:border-indigo-600 block w-full p-2.5 h-14 text-xl focus:outline-none focus:ring-1"
+                                placeholder="Nombre de la cuenta">
+                        </div>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div>
+                        <label for="password" class="block text-2xl font-medium text-gray-600">Contraseña</label>
+                        <div class="mt-2">
+                            <input id="password" type="password" name="password"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:border-indigo-600 block w-full p-2.5 h-14 text-xl focus:outline-none focus:ring-1" 
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="grid grid-cols-2 gap-3 text-right mt-6">
+                <button class="flex items-center justify-center gap-2 py-4 px-4 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-lg font-semibold rounded-xl transition duration-200" type="button" value="Cancelar">Cancelar</button>
+                <input class="flex items-center justify-center gap-2 py-4 px-4 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-lg font-semibold rounded-xl transition duration-200" type="submit" value="Confirmar">
+            </div>
+
+        </form>
 
     </dialog>
 
