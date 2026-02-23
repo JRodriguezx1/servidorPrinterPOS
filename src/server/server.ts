@@ -22,8 +22,8 @@ export class Server{
         this.app.use(express.static(path.join(__dirname, '../public')));
         this.app.use(express.static(path.join(process.cwd(), "downloads")));
         //escuchar el puerto
-        this.app.listen(3000, ()=>{
-            console.log(`Server running on port ${3000}`);
+        this.app.listen(this.port, ()=>{
+            console.log(`Server running on port ${this.port}`);
         });
         
         //const publicPath = path.join(__dirname, '../public');
