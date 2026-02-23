@@ -1,6 +1,6 @@
+import { Request, Response } from "express";
 import { printService } from "@services/printService";
 import { IPrintService, Print, PrintResponse } from 'types/PrintTypes';
-import { Request, Response } from "express";
 
 
 const printerService:IPrintService = new printService();

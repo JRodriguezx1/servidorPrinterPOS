@@ -8,6 +8,7 @@ import { userController } from "@controllers/usersController";
 import { rolesController } from "@controllers/rolesController";
 import { printController } from "@controllers/printController";
 import { fileController } from "@controllers/fileController";
+import { cuentaController } from "@controllers/cuentaController";
 
 /*const userRepo: IUserRepository = new userRepository(); //IUserRepository extiende de Repository y este tiene las propiedades o metodos create() y find()
                                                         // y userRepository implementa de IUserRepository los metodos create() y find() por lo tanto son compatibles.
@@ -40,9 +41,12 @@ export class RouterApp {
         router.get('/api/printPOS/openCashDrawer/:nameShare', printController.openCashDrawer);
         router.get('/api/printPOS/statushardware/:nameShare', printController.statushardware);
         router.post('/api/printPOS/printer', printController.printTicket);
-        
         //Rutas de archivos
         router.get('/api/file/downloadFileLogo', fileController.downloadFileLogo);
+        //Ruta de cuenta
+        router.post('/api/cuenta/create', cuentaController.createCuenta);
+        router.get('/api/cuenta/getCuenta', cuentaController.getCuenta);
+
 
         //Rutas user
         router.post('/api/user/create', userController.createuser);

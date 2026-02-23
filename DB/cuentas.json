@@ -1,0 +1,6 @@
+{
+  "nombreCuenta": "demo",
+  "password": "$argon2id$v=19$m=65536,t=3,p=4$oWI2qIfzUH10qFv/J6cuJw$jrZWZaYYUrhlzhWkYACinsHQPSAGfTV4L8C220GFGiY",
+  "id": "65f181b3-0221-4e10-bd5f-9f51cadecf54",
+  "createdAt": "2026-02-23T05:49:36.209Z"
+}

@@ -8,6 +8,7 @@ const iniciarSesion = document.querySelector('#iniciarSesion') as HTMLButtonElem
 const miDialogoIniciarSesion = document.querySelector('#miDialogoIniciarSesion') as any;
 const formInicioSesion = document.querySelector('#formInicioSesion') as HTMLFormElement;
 
+//.env = passwordAccess=$argon2id$v=19$m=65536,t=3,p=4$H8JXWBB2zP0tMB5wTS+k4w$1w+9MSJo1JnAulNCgqaeQUBmsz8AExL50FNqqB0mY90
 
 interface printerPOS { Name:string, ShareName:string };
 
@@ -21,8 +22,6 @@ interface printerPOS { Name:string, ShareName:string };
         console.log(error);
     }
 })();
-
-
 function printPrinterPOS(printers:printerPOS[]){
     printers.forEach(z=>{
         const op = document.createElement('option');
@@ -33,13 +32,52 @@ function printPrinterPOS(printers:printerPOS[]){
 }
 
 
+(async ()=>{
+    try {
+        const url = "/api/cuenta/getCuenta"; 
+        const respuesta = await fetch(url); 
+        const resultado = await respuesta.json();
+         document.querySelector('#cuentaText')!.textContent = resultado.nombreCuenta;
+    } catch (error) {
+        console.log(error);
+    }
+})();
+
+
+formInicioSesion.addEventListener('submit', (e:SubmitEvent)=>{
+    e.preventDefault();
+    const cuenta = formInicioSesion.elements.namedItem("nombreCuenta") as HTMLInputElement;
+    const password = formInicioSesion.elements.namedItem("password") as HTMLInputElement;
+    guardarCuentaDB({nombreCuenta:cuenta.value, password:password.value});
+});
+
+const guardarCuentaDB = async(cuenta:{nombreCuenta:string, password:string}):Promise<void>=>{
+    try {
+        const url = "/api/cuenta/create"; //llamado a la API REST
+        const respuesta = await fetch(url, {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify(cuenta)
+        });
+        const resultado = await respuesta.json();
+        if (resultado.valido !== undefined && !resultado?.valido) throw new Error(resultado.message || "Error al crear cuenta");
+        printLogs({ok:true, message:"Cuenta creada exitosamente", timestamp:new Date().toISOString(), jobId:""});
+        document.querySelector('#cuentaText')!.textContent = cuenta.nombreCuenta;
+        formInicioSesion.reset();
+    } catch (error) {
+        console.log(error);
+        printLogs({ok:false, message:(error as Error).message || "Error al crear cuenta", timestamp:new Date().toISOString(), jobId:""});
+    }
+    miDialogoIniciarSesion.close();
+}
+
+
 formSelectPrinter.addEventListener('submit', (e:SubmitEvent)=>{
     e.preventDefault();
     const printerShare = formSelectPrinter.elements.namedItem("selectPrinter") as HTMLSelectElement;
     if((e.submitter as HTMLButtonElement).id == "testConexion")testPrint(printerShare.value);
     if((e.submitter as HTMLButtonElement).id == "testhardware")testhardware(printerShare.value);
 });
-
 const testPrint = async(printerShare:string):Promise<void>=>{
     try {
         const url = "/api/printPOS/testPrinter/"+printerShare; //llamado a la API REST
@@ -50,8 +88,6 @@ const testPrint = async(printerShare:string):Promise<void>=>{
         console.log(error);
     }
 }
-
-
 async function testhardware(printerShare:string):Promise<void>{
     try {
         const url = "/api/printPOS/statushardware/"+printerShare; //llamado a la API REST
@@ -89,9 +125,10 @@ function printLogs(resultado:{ ok:boolean, jobId:string, message:string, timesta
 
 logo.addEventListener('click', async()=>{
     try {
-        const url = "/api/file/downloadFile"; //llamado a la API REST
+        const url = "/api/file/downloadFileLogo"; //llamado a la API REST
         const respuesta = await fetch(url);
         const resultado = await respuesta.json();
+        (document.getElementById("imgLogo") as HTMLImageElement).src = "logo.png?v="+ Date.now();
         printLogs(resultado);
     } catch (error) {
         console.log(error);
@@ -107,7 +144,7 @@ iniciarSesion.addEventListener('click', ()=>{
 
 function cerrarDialogoExterno(event:Event) {
     const f = event.target;
-    if (f=== miDialogoIniciarSesion || (f as HTMLButtonElement).id == 'btnXCerrarModalAbono' ) {
+    if (f=== miDialogoIniciarSesion || (f as HTMLButtonElement).value =="Cancelar"  || (f as HTMLButtonElement).id == 'btnXCerrarModalAbono' ) {
         miDialogoIniciarSesion.close();
        
     }

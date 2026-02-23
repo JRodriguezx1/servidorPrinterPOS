@@ -2,6 +2,9 @@
 import { Server } from "@server/server";
 import { RouterApp } from "@routes/router";
 import "@config/mongodb";
+import dotenv from "dotenv";
+
+dotenv.config();
 
       
 (async  ()=>{

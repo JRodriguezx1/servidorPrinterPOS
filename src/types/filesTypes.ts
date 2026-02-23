@@ -10,7 +10,7 @@ import { Repository } from "./RepositoryTypes"
 
 //interfaz del servicio
 interface IFileService {
-    downloadFileLogo():Promise<boolean>,
+    downloadFileLogo(nombre: string):Promise<boolean>,
 }
 
 

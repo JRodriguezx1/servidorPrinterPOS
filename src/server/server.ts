@@ -20,6 +20,7 @@ export class Server{
         this.app.use(this.routes);  //monta rutas, todas las rutas cuelgan desde / el prefijo se define en AppRouter
         //
         this.app.use(express.static(path.join(__dirname, '../public')));
+        this.app.use(express.static(path.join(process.cwd(), "downloads")));
         //escuchar el puerto
         this.app.listen(3000, ()=>{
             console.log(`Server running on port ${3000}`);
