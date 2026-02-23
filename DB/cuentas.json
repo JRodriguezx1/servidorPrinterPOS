@@ -1,6 +1,6 @@
 {
-  "nombreCuenta": "demo",
-  "password": "$argon2id$v=19$m=65536,t=3,p=4$qxo/EJKxbD6CYpfdAdIrqA$0kLde/3OCyZCn7pP28zpkR/ntzPQsxRR5e4HPl5Ji7Q",
-  "id": "f874c8db-6791-4225-92d8-b9f8a3ead89d",
-  "createdAt": "2026-02-23T06:06:59.907Z"
+  "nombreCuenta": "tecniware",
+  "password": "$argon2id$v=19$m=65536,t=3,p=4$L9wAaFbaH2dZ33hd/Icl+w$iwLN9Yj0R884WNeKZu1eW+7YthNSPgD2qrsEi0nrCpA",
+  "id": "367e9faa-f7d2-438b-98a7-7f9716c89d9a",
+  "createdAt": "2026-02-23T17:34:54.618Z"
 }

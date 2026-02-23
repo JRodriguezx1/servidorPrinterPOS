@@ -245,7 +245,7 @@ export class printService implements IPrintService{
             const ticketFile = path.join(this.filePath, 'openCashDrawer.bin');
             const printerPath = "\\\\localhost\\"+nameShare;
             await this.execPromise(`cmd /c copy /b "${ticketFile}" "${printerPath}"`);
-            await fs.unlink(ticketFile);
+            //await fs.unlink(ticketFile);
             return true;
         } catch (er) {
             console.log('Error crítico en el proceso de apertura del cajon monedero>>', er);

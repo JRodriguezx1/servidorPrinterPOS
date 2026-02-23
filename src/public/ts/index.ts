@@ -1,4 +1,3 @@
-//import { writeFile } from 'fs/promises';
 const selectPrinter = document.querySelector('#selectPrinter') as HTMLSelectElement;
 const formSelectPrinter = document.querySelector('#formSelectPrinter') as HTMLFormElement;
 const logs = document.querySelector('#logs') as HTMLDivElement;
@@ -8,7 +7,6 @@ const iniciarSesion = document.querySelector('#iniciarSesion') as HTMLButtonElem
 const miDialogoIniciarSesion = document.querySelector('#miDialogoIniciarSesion') as any;
 const formInicioSesion = document.querySelector('#formInicioSesion') as HTMLFormElement;
 
-//.env = passwordAccess=$argon2id$v=19$m=65536,t=3,p=4$H8JXWBB2zP0tMB5wTS+k4w$1w+9MSJo1JnAulNCgqaeQUBmsz8AExL50FNqqB0mY90
 
 interface printerPOS { Name:string, ShareName:string };
 
@@ -146,6 +144,6 @@ function cerrarDialogoExterno(event:Event) {
     const f = event.target;
     if (f=== miDialogoIniciarSesion || (f as HTMLButtonElement).value =="Cancelar"  || (f as HTMLButtonElement).id == 'btnXCerrarModalAbono' ) {
         miDialogoIniciarSesion.close();
-       
+    
     }
 }
