@@ -1,0 +1,63 @@
+1. compilar el proyecto en "dist" con npm run build
+2. descargar el binario de node en x64 o x 86
+3. crear la carpeta del proyecto de nombre: ReadyToPack
+4. copiar la carpeta dist, .env, node.exe, package.json, imágenes o iconos, otras carpetas como (DB, downloads, temp)
+5. ejecutar npm install --production  (solo instala dependencias de produccion)
+6. verificar que aplicativo arranque con dist/app.js
+7. crear este .bat en la carpeta raiz: 
+      @echo off
+      title Consola de API de Impresion
+      echo Cargando API... espere un momento.
+      :: Esto cierra cualquier instancia previa para que no choque el puerto
+      taskkill /f /im node.exe >nul 2>&1
+      start "ServerPOSJ2" /min "%~dp0node.exe" "%~dp0dist\app.js"
+      exit
+7. crear el instalar con inno setup
+8. ejecutar el script *.iss: 
+
+[Setup]
+AppName=Server POS j2softwarePOS
+AppVersion=1.0
+DefaultDirName={commonpf}\APIServerJ2
+DefaultGroupName=Mi API ServerPOS
+OutputDir=userdocs:\Output
+OutputBaseFilename=Instalador_API
+Compression=lzma
+SolidCompression=yes
+; Pide privilegios de admin para poder escribir en Program Files y crear el servicio
+PrivilegesRequired=admin 
+
+[Files]
+; Archivos base
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\node.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\dist\*"; DestDir: "{app}\dist"; Flags: ignoreversion recursesubdirs
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\node_modules\*"; DestDir: "{app}\node_modules"; Flags: ignoreversion recursesubdirs
+; Agrega esto para que module-alias no explote
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\package.json"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\.env"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\APIServerJ2.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\Iniciar_API.bat"; DestDir: "{app}"; Flags: ignoreversion
+
+; Carpetas de Datos (IMPORTANTE: Se crean y se dan permisos)
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\DB\*"; DestDir: "{app}\DB"; Flags: ignoreversion recursesubdirs
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\downloads\*"; DestDir: "{app}\downloads"; Flags: ignoreversion recursesubdirs
+Source: "D:\Programacion web\practica de programacion web\curso node.js\ejercicios 2026\ReadyToPack\temp\*"; DestDir: "{app}\temp"; Flags: ignoreversion recursesubdirs
+
+[Dirs]
+; Permisos totales para que Node pueda escribir los JSON y los PNG
+Name: "{app}\DB"; Permissions: users-full
+Name: "{app}\downloads"; Permissions: users-full
+Name: "{app}\temp"; Permissions: users-full
+
+[Icons]
+; Agregamos WorkingDir: "{app}" para que Node sepa dónde está parado
+Name: "{group}\Iniciar API Manualmente"; FileName: "{app}\node.exe"; Parameters: """{app}\dist\app.js"""; WorkingDir: "{app}"
+Name: "{commondesktop}\APIServerJ2"; FileName: "{app}\Iniciar_API.bat"; Parameters: """{app}\dist\app.js"""; IconFilename: "{app}\APIServerJ2.ico"; WorkingDir: "{app}"
+Name: "{userstartup}\APIServerJ2"; FileName: "{app}\Iniciar_API.bat"; Parameters: """{app}\dist\app.js"""; WorkingDir: "{app}"; Flags: runminimized; IconFilename: "{app}\APIServerJ2.ico"
+
+[Run]
+; Agregamos WorkingDir: "{app}" aquí también
+Filename: "{app}\Iniciar_API.bat"; Parameters: """{app}\dist\app.js"""; WorkingDir: "{app}"; Description: "Arrancar API"; Flags: nowait postinstall skipifsilent
+
+
+9. si falla instalar paquetes como vc_redist.x64
