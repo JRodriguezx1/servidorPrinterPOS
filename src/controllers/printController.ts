@@ -31,8 +31,10 @@ export class printController {
     }
 
     static ticket1  = async(req:Request, res:Response)=>{
+        const {nameShare} = req.params;
+        if(Array.isArray(nameShare))return res.status(400).json({ message: "Nombre compartido inválido" });
         try {
-            const response = await printerService.ticket1();
+            const response = await printerService.ticket1(nameShare, req.body);
             res.json(response);
         } catch (error) {
             res.json(error);

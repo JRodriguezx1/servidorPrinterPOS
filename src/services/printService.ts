@@ -2,7 +2,7 @@ import path, { join } from 'path';
 import  fs from 'fs/promises';  //modulo de archivos con mejora asincrona
 import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
-import { IPrintService, ListPrintersResponse, Print, DevicePOS, PrintResponse } from "types/PrintTypes";
+import { InvoiceData, IPrintService, ListPrintersResponse, Print, DevicePOS, PrintResponse } from "types/PrintTypes";
 import { ThermalPrinter, PrinterTypes, CharacterSet } from "node-thermal-printer";
 
 //import { Printer } from '@node-escpos/core';
@@ -97,19 +97,36 @@ export class printService implements IPrintService{
     public async testPrinter(nameShare:string): Promise<PrintResponse>{
         return new Promise((resolve, reject)=>{
             this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
-                printer.alignCenter(); 
+                /*printer.alignCenter(); 
                 printer.bold(true);
                 printer.setTextSize(2, 2);
-                printer.println("PRUEBA DE IMPRESION\n"); 
+                printer.println("PRUEBA DE IMPRESION");
+                printer.clear();
                 printer.bold(false);
                 printer.setTextSize(1, 1);
+                printer.setTypeFontB();
                 printer.alignLeft();
-                printer.println("Servidor de impresion node - v1.0.0\n"); 
-                printer.drawLine(); 
+                printer.println("Servidor de impresion node - v1.0.0"); 
+                //printer.drawLine(); 
                 printer.alignLeft(); 
-                printer.println("Test de impresion basico\n"); 
+                printer.println("Test de impresion basico"); 
                 printer.newLine();
-                printer.println("J2 Software POS Multisucursal.\n"); 
+                printer.println("J2 Software POS Multisucursal."); 
+                printer.cut();*/
+                printer.clear();
+                // 1. Reset total de estilos
+                printer.setTextNormal(); 
+                // 2. Forzar fuente A o B (La B suele ser más pequeña y delgada)
+                printer.setTypeFontB(); 
+                // 3. Tamaño (0,0) es el más pequeño en algunas librerías, 
+                // aunque (1,1) es el estándar. Prueba con ambos.
+                printer.setTextSize(0, 0);
+                // 4. Asegurar que el bold esté apagado justo antes de escribir
+                printer.bold(false);
+                printer.alignLeft();
+                printer.println("Servidor de impresion node - v1.0.0");
+                printer.newLine();
+                printer.println("J2 Software POS Multisucursal."); 
                 printer.cut();
             }, resolve, reject, nameShare); //pasamos la promesa
         });
@@ -125,25 +142,98 @@ export class printService implements IPrintService{
 
 
 
-    async ticket1(): Promise<PrintResponse>{
+    async ticket1(nameShare:string, data:InvoiceData): Promise<PrintResponse>{
         return new Promise((resolve, reject)=>{
-            /*this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
+            this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
                 //Diseñamos el ticket 
-                printer.alignCenter(); 
+                // ===============================
+                // ENCABEZADO
+                // ===============================
+                printer.clear();
+                printer.setTextNormal(); 
+                //printer.setTypeFontB(); // 👈 CLAVE
+                printer.alignCenter();
                 printer.bold(true);
-                printer.setTextSize(2, 2);
-                printer.println("MI NEGOCIO\n"); 
+                printer.setTextSize(0, 0);
+                printer.println(" MI EMPRESA.COM SAS");
+                //printer.setTextSize(1, 1);
                 printer.bold(false);
-                printer.setTextSize(1, 1);
-                printer.alignLeft();
-                printer.println("Calle Falsa 123\n"); 
-                printer.drawLine(); 
-                printer.alignLeft(); 
-                printer.println("Producto Total\n"); 
+
+                printer.println(`NIT: 900123456`);
+                printer.println("Calle 10 #20-30\n");
+                printer.println(`Tel: 3001234567`);
+                //printer.drawLine();
                 printer.newLine();
-                printer.println("Hamb. Doble $10.00\n"); 
+                // ===============================
+                // DATOS FACTURA
+                // ===============================
+                printer.alignLeft();
+                printer.println(`Factura: FV-1025`);
+                printer.println(`Fecha: 24/02/2026 14:32`);
+                printer.println(`Cajero: Julain\n`);
+
+                /*
+                // ===============================
+                // CLIENTE
+                // ===============================
+                printer.println(`Cliente: Juan Perez`);
+                printer.println(`Doc: 123456789`);
+                
+
+                // ===============================
+                // DETALLE PRODUCTOS
+                // ===============================
+                printer.tableCustom([
+                    { text: "Cant", align: "LEFT", width: 0.15 },
+                    { text: "Descripcion", align: "LEFT", width: 0.45 },
+                    { text: "P.Unit", align: "RIGHT", width: 0.2 },
+                    { text: "Total", align: "RIGHT", width: 0.2 },
+                ]);
+
+                printer.drawLine();
+
+                [1, 2].forEach(item => {
+                    printer.tableCustom([
+                        { text: item.toString(), align: "LEFT", width: 0.15 },
+                        { text: `Producto zxv`, align: "LEFT", width: 0.45 },
+                        { text: '$5.000', align: "RIGHT", width: 0.2 },
+                        { text: '$10.000', align: "RIGHT", width: 0.2 },
+                    ]);
+                });
+
+                printer.drawLine();
+
+                // ===============================
+                // TOTALES
+                // ===============================
+                printer.alignRight();
+                printer.println(`Subtotal: $25.000`);
+                printer.println(`IVA: $0.00`);
+                printer.bold(true);
+                printer.println(`TOTAL: $25.000`);
+                printer.bold(false);
+
+                printer.drawLine();
+
+                // ===============================
+                // FORMA DE PAGO
+                // ===============================
+                printer.alignLeft();
+                printer.println(`Forma de pago: EFECTIVO`);
+                printer.println(`Recibido: $30.000`);
+                printer.println(`Cambio: $5.000`);
+
+                printer.drawLine();
+
+                // ===============================
+                // FOOTER
+                // ===============================
+                printer.alignCenter();
+                printer.println("Gracias por su compra");
+                printer.println("J2 Software POS");
+                printer.newLine();*/
                 printer.cut();
-            }, resolve, reject);*/ //pasamos la promesa
+            }, resolve, reject, nameShare); //pasamos la promesa
         });
     }
 
@@ -179,8 +269,9 @@ export class printService implements IPrintService{
         try {
             let printer = new ThermalPrinter({
                     type: PrinterTypes.EPSON,  // O PrinterTypes.STAR
+                    width: 48,
                     interface: path.join(this.filePath, `ticket-${job.id}.bin`),   //comentar esta linea si se usa: buffer = printer.getBuffer();
-                    characterSet: CharacterSet.PC852_LATIN2, // Configuración de acentos/eñes
+                    characterSet: CharacterSet.PC852_LATIN2, // Configuración de acentos/eñes o PC850_MULTILINGUAL
                     removeSpecialCharacters: false,
                 });
 
@@ -236,7 +327,6 @@ export class printService implements IPrintService{
             characterSet: CharacterSet.PC852_LATIN2, // Configuración de acentos/eñes
             removeSpecialCharacters: false,
         });
-
         // Abrir el cajón monedero
         printer.openCashDrawer();
         try {

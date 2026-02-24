@@ -30,7 +30,41 @@ interface PrintResponse {
     timestamp: Date;
 }
 
-//------------------------------------------------------------------------------
+//========================================================================================
+
+interface InvoiceData {
+    company: {
+        name: string;
+        nit: string;
+        address: string;
+        phone: string;
+    };
+    invoice: {
+        number: string;
+        date: string;
+        seller: string;
+    };
+    customer: {
+        name: string;
+        document: string;
+    };
+    items: {
+        name: string;
+        quantity: number;
+        price: number;
+        total: number;
+    }[];
+    totals: {
+        subtotal: number;
+        tax: number;
+        total: number;
+    };
+    payment: {
+        method: string;
+        received: number;
+        change: number;
+    };
+}
 
 //interfaz del repositorio
 interface IPrintRepository extends Repository<Print>{
@@ -43,7 +77,7 @@ interface IPrintService {
     listPrinter():Promise<ListPrintersResponse>;
     testPrinter(nameShare:string):Promise<PrintResponse>,
     viewLog():Promise<PrintResponse|null>,
-    ticket1():Promise<PrintResponse>,
+    ticket1(nameShare:string, data:InvoiceData):Promise<PrintResponse>,
     openCashDrawer(nameShare:string):Promise<boolean>,
     statushardware(nameShare:string):Promise<PrintResponse>,
     printPOS(print: Print):Promise<any>,
@@ -54,5 +88,6 @@ export{
     PrintResponse,
     DevicePOS,
     ListPrintersResponse,
+    InvoiceData,
     IPrintService
 }
