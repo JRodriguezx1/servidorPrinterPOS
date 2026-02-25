@@ -144,17 +144,24 @@ export class printService implements IPrintService{
 
     async ticket1(nameShare:string, data:InvoiceData): Promise<PrintResponse>{
         return new Promise((resolve, reject)=>{
-            this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
+            this.addToQueue(async (printer)=>{  //guarda funcion con el diseño del ticket
     
                 // ===============================
-                // ENCABEZADO
+                // LOGO
                 // ===============================
                 printer.clear();
                 printer.setTextNormal(); 
-                //printer.setTypeFontB(); // 👈 CLAVE
+                printer.setTypeFontB(); // 👈 CLAVE
                 printer.alignCenter();
-                printer.bold(true);
                 printer.setTextSize(0, 0);
+                await printer.printImage(path.join(process.cwd(), "downloads", "logo.png"));
+                printer.newLine();
+
+                 // ===============================
+                // ENCABEZADO
+                // ===============================
+                printer.setTypeFontA(); 
+                printer.bold(true);
                 printer.println(" MI EMPRESA.COM SAS");
                 //printer.setTextSize(1, 1);
                 printer.bold(false);
