@@ -145,7 +145,7 @@ export class printService implements IPrintService{
     async ticket1(nameShare:string, data:InvoiceData): Promise<PrintResponse>{
         return new Promise((resolve, reject)=>{
             this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
-                //Diseñamos el ticket 
+    
                 // ===============================
                 // ENCABEZADO
                 // ===============================
@@ -167,41 +167,54 @@ export class printService implements IPrintService{
                 // ===============================
                 // DATOS FACTURA
                 // ===============================
+                printer.bold(true);
+                printer.println("FACTURA ELECTRONICA DE VENTA\n");
+                printer.bold(false);
                 printer.alignLeft();
                 printer.println(`Factura: FV-1025`);
                 printer.println(`Fecha: 24/02/2026 14:32`);
+                printer.println(`Caja: Caja principal`);
                 printer.println(`Cajero: Julain\n`);
-
-                /*
+                printer.alignCenter();
+                printer.println(`---------------------------------`);
+                printer.newLine();
                 // ===============================
                 // CLIENTE
                 // ===============================
+                printer.alignCenter();
                 printer.println(`Cliente: Juan Perez`);
-                printer.println(`Doc: 123456789`);
+                printer.println(`Documento: 123456789`);
+                printer.println(`Telefono: 314567890`);
+                printer.println(`Direccion: Calle 123 #45-67`);
+                printer.alignCenter();
+                printer.println(`---------------------------------`);
+                printer.newLine();
                 
-
                 // ===============================
                 // DETALLE PRODUCTOS
                 // ===============================
+                printer.bold(true);
                 printer.tableCustom([
                     { text: "Cant", align: "LEFT", width: 0.15 },
-                    { text: "Descripcion", align: "LEFT", width: 0.45 },
-                    { text: "P.Unit", align: "RIGHT", width: 0.2 },
-                    { text: "Total", align: "RIGHT", width: 0.2 },
+                    { text: "P.Unit", align: "CENTER", width: 0.2 },
+                    { text: "Desc", align: "CENTER", width: 0.3 },
+                    { text: "Total", align: "CENTER", width: 0.2 },
                 ]);
-
-                printer.drawLine();
+                printer.bold(false);
+                //printer.drawLine();
 
                 [1, 2].forEach(item => {
+                    printer.alignCenter();
+                    printer.println("Vitamina women Blend X");
                     printer.tableCustom([
-                        { text: item.toString(), align: "LEFT", width: 0.15 },
-                        { text: `Producto zxv`, align: "LEFT", width: 0.45 },
-                        { text: '$5.000', align: "RIGHT", width: 0.2 },
-                        { text: '$10.000', align: "RIGHT", width: 0.2 },
+                        { text: item.toString(), align: "LEFT", width: 0.25 },
+                        { text: `$5.000.000`, align: "LEFT", width: 0.3 },
+                        //{ text: '$5.000', align: "RIGHT", width: 0.2 },
+                        { text: '$100.000.000', align: "RIGHT", width: 0.3 },
                     ]);
                 });
 
-                printer.drawLine();
+                /*printer.drawLine();
 
                 // ===============================
                 // TOTALES
