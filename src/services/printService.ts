@@ -162,26 +162,26 @@ export class printService implements IPrintService{
                 // ===============================
                 printer.setTypeFontA(); 
                 printer.bold(true);
-                printer.println(" MI EMPRESA.COM SAS");
+                printer.println(data.negocio.toUpperCase());
                 //printer.setTextSize(1, 1);
                 printer.bold(false);
 
-                printer.println(`NIT: 900123456`);
-                printer.println("Calle 10 #20-30\n");
-                printer.println(`Tel: 3001234567`);
+                printer.println(`NIT: ${data.nit}`);
+                printer.println(data.direccion);
+                printer.println(`Tel: ${data.telefono}`);
                 //printer.drawLine();
                 printer.newLine();
                 // ===============================
                 // DATOS FACTURA
                 // ===============================
                 printer.bold(true);
-                printer.println("FACTURA ELECTRONICA DE VENTA\n");
+                printer.println(data.textFactura);
                 printer.bold(false);
                 printer.alignLeft();
-                printer.println(`Factura: FV-1025`);
-                printer.println(`Fecha: 24/02/2026 14:32`);
-                printer.println(`Caja: Caja principal`);
-                printer.println(`Cajero: Julain\n`);
+                printer.println(`Factura: ${data.prefijo}-${data.consecutivo}`);
+                printer.println(`Fecha: ${data.fechaPago}`);
+                printer.println(`Caja: ${data.caja}`);
+                printer.println(`Cajero: ${data.vendedor}\n`);
                 printer.alignCenter();
                 printer.println(`---------------------------------`);
                 printer.newLine();
@@ -189,10 +189,10 @@ export class printService implements IPrintService{
                 // CLIENTE
                 // ===============================
                 printer.alignCenter();
-                printer.println(`Cliente: Juan Perez`);
-                printer.println(`Documento: 123456789`);
-                printer.println(`Telefono: 314567890`);
-                printer.println(`Direccion: Calle 123 #45-67`);
+                printer.println(`Cliente: ${data.cliente.nombre} ${data.cliente.apellido}`);
+                printer.println(`Documento: ${data.cliente.identificacion}`);
+                printer.println(`Telefono: ${data.cliente.telefono}`);
+                printer.println(`Direccion: ${data.cliente.data1}`);
                 printer.alignCenter();
                 printer.println(`---------------------------------`);
                 printer.newLine();
@@ -210,14 +210,14 @@ export class printService implements IPrintService{
                 printer.bold(false);
                 //printer.drawLine();
 
-                [1, 2].forEach(item => {
+                data.items.forEach(item => {
                     printer.alignCenter();
-                    printer.println("Vitamina women Blend X");
+                    printer.println(item.nombreproducto);
                     printer.tableCustom([
-                        { text: item.toString(), align: "LEFT", width: 0.25 },
-                        { text: `$5.000.000`, align: "LEFT", width: 0.3 },
+                        { text: item.cantidad.toString(), align: "LEFT", width: 0.25 },
+                        { text: `$${item.valorunidad}`, align: "LEFT", width: 0.3 },
                         //{ text: '$5.000', align: "RIGHT", width: 0.2 },
-                        { text: '$100.000.000', align: "RIGHT", width: 0.3 },
+                        { text: `$${item.total}`, align: "RIGHT", width: 0.3 },
                     ]);
                 });
 

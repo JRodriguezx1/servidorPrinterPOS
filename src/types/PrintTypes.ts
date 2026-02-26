@@ -32,38 +32,69 @@ interface PrintResponse {
 
 //========================================================================================
 
+interface Cliente {
+  id: string;
+  nombre: string;
+  apellido: string;
+  tipodocumento: string;
+  identificacion: string;
+  telefono: string;
+  email: string;
+  fecha_nacimiento: string | null;
+  total_compras: number | null;
+  ultima_compra: string | null;
+  totaldebe: number | null;
+  limitecredito: number | null;
+  data1: string | null;
+  created_at: string;
+}
+interface ItemFactura {
+  id: string;
+  idproducto: string;
+  tipoproducto: string;
+  tipoproduccion: string;
+  idcategoria: string;
+  nombreproducto: string;
+  rendimientoestandar: string;
+  foto: string;
+  costo: string;
+  valorunidad: string;
+  cantidad: number;
+  subtotal: number;
+  base: number;
+  impuesto: string;
+  valorimp: number;
+  descuento: number;
+  total: number;
+}
+interface MedioPago {
+  idmediopago: string;
+  mediopago: string;
+  valor: number;
+}
 interface InvoiceData {
-    company: {
-        name: string;
-        nit: string;
-        address: string;
-        phone: string;
-    };
-    invoice: {
-        number: string;
-        date: string;
-        seller: string;
-    };
-    customer: {
-        name: string;
-        document: string;
-    };
-    items: {
-        name: string;
-        quantity: number;
-        price: number;
-        total: number;
-    }[];
-    totals: {
-        subtotal: number;
-        tax: number;
-        total: number;
-    };
-    payment: {
-        method: string;
-        received: number;
-        change: number;
-    };
+  negocio: string;
+  nit: string;
+  direccion: string;
+  telefono: string;
+  email: string;
+  num_orden: number;
+  textFactura: string;
+  prefijo: string;
+  consecutivo: string;
+  fechaPago: string;
+  caja: string;
+  vendedor: string;
+  cliente: Cliente;
+  tipoventa: string;
+  subtotal: string;
+  base: string;
+  valorimpuestototal: string;
+  descuento: string;
+  total: string;
+  observacion: string;
+  items: ItemFactura[];
+  mediospago: MedioPago[];
 }
 
 //interfaz del repositorio
