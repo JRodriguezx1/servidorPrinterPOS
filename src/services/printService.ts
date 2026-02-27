@@ -282,7 +282,7 @@ export class printService implements IPrintService{
                 printer.alignCenter();
                 printer.setTypeFontB();
                 printer.println("Generado por J2 Software POS punto de venta");
-                printer.println("https://www.j2softwarepos.com");
+                printer.println("www.j2softwarepos.com");
                 printer.println("NIT: 1094912099-5");
 
                 esEfectivo?printer.openCashDrawer():'';
