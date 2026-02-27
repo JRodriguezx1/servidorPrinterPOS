@@ -143,6 +143,7 @@ export class printService implements IPrintService{
 
 
     async ticket1(nameShare:string, data:InvoiceData): Promise<PrintResponse>{
+        let esEfectivo = false;
         return new Promise((resolve, reject)=>{
             this.addToQueue(async (printer)=>{  //guarda funcion con el diseño del ticket
     
@@ -156,8 +157,7 @@ export class printService implements IPrintService{
                 printer.setTextSize(0, 0);
                 await printer.printImage(path.join(process.cwd(), "downloads", "logo.png"));
                 printer.newLine();
-
-                 // ===============================
+                // ===============================
                 // ENCABEZADO
                 // ===============================
                 printer.setTypeFontA(); 
@@ -165,12 +165,17 @@ export class printService implements IPrintService{
                 printer.println(data.negocio.toUpperCase());
                 //printer.setTextSize(1, 1);
                 printer.bold(false);
-
                 printer.println(`NIT: ${data.nit}`);
                 printer.println(data.direccion);
                 printer.println(`Tel: ${data.telefono}`);
                 //printer.drawLine();
                 printer.newLine();
+                // ===============================
+                // ADQUIRIENTE SOLO SI ES FACTURA ELECTRONICA DE VENTA
+                // ===============================
+                if(data.tipoFactura === '1'){
+                    printer.println(`Cliente: Consumidor Final`);
+                }
                 // ===============================
                 // DATOS FACTURA
                 // ===============================
@@ -179,9 +184,10 @@ export class printService implements IPrintService{
                 printer.bold(false);
                 printer.alignLeft();
                 printer.println(`Factura: ${data.prefijo}-${data.consecutivo}`);
-                printer.println(`Fecha: ${data.fechaPago}`);
+                printer.println(`Fecha de emision: ${data.fechaPago}`);
+                printer.println(`Forma de pago: ${data.tipoventa}`);
                 printer.println(`Caja: ${data.caja}`);
-                printer.println(`Cajero: ${data.vendedor}\n`);
+                printer.println(`Vendedor: ${data.vendedor}\n`);
                 printer.alignCenter();
                 printer.println(`---------------------------------`);
                 printer.newLine();
@@ -196,7 +202,6 @@ export class printService implements IPrintService{
                 printer.alignCenter();
                 printer.println(`---------------------------------`);
                 printer.newLine();
-                
                 // ===============================
                 // DETALLE PRODUCTOS
                 // ===============================
@@ -208,7 +213,6 @@ export class printService implements IPrintService{
                     { text: "Total", align: "CENTER", width: 0.2 },
                 ]);
                 printer.bold(false);
-                //printer.drawLine();
 
                 data.items.forEach(item => {
                     printer.alignCenter();
@@ -217,41 +221,62 @@ export class printService implements IPrintService{
                         { text: item.cantidad.toString(), align: "LEFT", width: 0.25 },
                         { text: `$${item.valorunidad}`, align: "LEFT", width: 0.3 },
                         //{ text: '$5.000', align: "RIGHT", width: 0.2 },
-                        { text: `$${item.total}`, align: "RIGHT", width: 0.3 },
+                        { text: `$${item.total.toLocaleString()}`, align: "RIGHT", width: 0.3 },
                     ]);
                 });
-
-                /*printer.drawLine();
-
+                printer.newLine();
+                printer.newLine();
                 // ===============================
                 // TOTALES
                 // ===============================
                 printer.alignRight();
-                printer.println(`Subtotal: $25.000`);
-                printer.println(`IVA: $0.00`);
+                printer.println(`Subtotal: +$${Number(data.subtotal).toLocaleString()}`);
+                printer.println(`Impuesto: $${Number(data.valorimpuestototal).toLocaleString()}`);
+                printer.println(`Descuento: -$${Number(data.descuento).toLocaleString()}`);
+                printer.newLine();
+                printer.setTypeFontB();
+                printer.setTextSize(1, 1);
                 printer.bold(true);
-                printer.println(`TOTAL: $25.000`);
+                printer.println(`TOTAL: $ ${Number(data.total).toLocaleString()}`);
                 printer.bold(false);
-
-                printer.drawLine();
-
+                printer.newLine();
+                printer.newLine();
                 // ===============================
                 // FORMA DE PAGO
                 // ===============================
-                printer.alignLeft();
-                printer.println(`Forma de pago: EFECTIVO`);
+                printer.setTypeFontA();
+                printer.setTextSize(0, 0);
+                printer.alignCenter();
+                printer.println("MEDIOS DE PAGO");
+                printer.alignRight();
+                data.mediospago.forEach((mp) => {
+                    printer.println(`${mp.mediopago}: $${mp.valor.toLocaleString()}`);
+                    if(mp.idmediopago === '1')esEfectivo = true;
+                });
+                esEfectivo?printer.println('Recibido'):printer.println('cambio');
+                printer.newLine();
+                printer.alignCenter();
+                printer.println(`==========================`);
+                printer.newLine();
+                /*printer.println(`Forma de pago: EFECTIVO`);
                 printer.println(`Recibido: $30.000`);
-                printer.println(`Cambio: $5.000`);
+                printer.println(`Cambio: $5.000`);*/
 
-                printer.drawLine();
+
+                // ===============================
+                // INFO DE RESOLUCION DE FACTURACION ELECTRONICA DE VENTA SI APLICA
+                // ===============================
+                if(data.tipoFactura === '1'){
+
+                }
 
                 // ===============================
                 // FOOTER
                 // ===============================
                 printer.alignCenter();
+                printer.setTypeFontB();
                 printer.println("Gracias por su compra");
                 printer.println("J2 Software POS");
-                printer.newLine();*/
                 printer.cut();
             }, resolve, reject, nameShare); //pasamos la promesa
         });

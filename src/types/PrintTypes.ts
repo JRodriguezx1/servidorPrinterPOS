@@ -31,7 +31,14 @@ interface PrintResponse {
 }
 
 //========================================================================================
-
+interface ConsumidorFinal {
+    identification_number: string,
+    name: string,
+    phone: string | null,
+    address: string | null,
+    email: string | null,
+    municipality_id: string | null
+}
 interface Cliente {
   id: string;
   nombre: string;
@@ -72,6 +79,27 @@ interface MedioPago {
   mediopago: string;
   valor: number;
 }
+interface Resolution {
+    consecutivoremplazo: string | null;
+    electronica: string | null;
+    estado: string;
+    fechafin: string | null;
+    fechainicio: string | null;
+    id: string;
+    id_sucursalid: string;
+    idcompania: string;
+    idnegocio: string;
+    idtipofacturador: string;
+    mostrarimpuestodiscriminado: string;
+    mostrarresolucion: string;
+    nombre: string;
+    prefijo: string;
+    rangofinal: string;
+    rangoinicial: string;
+    resolucion: string;
+    siguientevalor: number;
+    tokenfacturaelectronica: string | null;
+}
 interface InvoiceData {
   negocio: string;
   nit: string;
@@ -79,12 +107,14 @@ interface InvoiceData {
   telefono: string;
   email: string;
   num_orden: number;
+  tipoFactura: string;
   textFactura: string;
   prefijo: string;
   consecutivo: string;
   fechaPago: string;
   caja: string;
   vendedor: string;
+  consumidorfinal: ConsumidorFinal;
   cliente: Cliente;
   tipoventa: string;
   subtotal: string;
@@ -93,6 +123,7 @@ interface InvoiceData {
   descuento: string;
   total: string;
   observacion: string;
+  resolucion: Resolution;
   items: ItemFactura[];
   mediospago: MedioPago[];
 }
