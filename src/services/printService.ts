@@ -157,6 +157,7 @@ export class printService implements IPrintService{
                 printer.setTextSize(0, 0);
                 await printer.printImage(path.join(process.cwd(), "downloads", "logo.png"));
                 printer.newLine();
+                printer.newLine();
                 // ===============================
                 // ENCABEZADO
                 // ===============================
@@ -174,7 +175,8 @@ export class printService implements IPrintService{
                 // ADQUIRIENTE SOLO SI ES FACTURA ELECTRONICA DE VENTA
                 // ===============================
                 if(data.tipoFactura === '1'){
-                    printer.println(`Cliente: Consumidor Final`);
+                    printer.println(`Cliente: ${data.consumidorFinal.name}`);
+                    printer.println(`NIT: ${data.consumidorFinal.identification_number}`);
                 }
                 // ===============================
                 // DATOS FACTURA
@@ -253,7 +255,6 @@ export class printService implements IPrintService{
                     printer.println(`${mp.mediopago}: $${mp.valor.toLocaleString()}`);
                     if(mp.idmediopago === '1')esEfectivo = true;
                 });
-                esEfectivo?printer.println('Recibido'):printer.println('cambio');
                 printer.newLine();
                 printer.alignCenter();
                 printer.println(`==========================`);
@@ -267,7 +268,12 @@ export class printService implements IPrintService{
                 // INFO DE RESOLUCION DE FACTURACION ELECTRONICA DE VENTA SI APLICA
                 // ===============================
                 if(data.tipoFactura === '1'){
-
+                    printer.printQR(data.link || 'https://catalogo-vpfe.dian.gov.co/User/SearchDocument', {cellSize: 7, correction: 'M', model: 2});
+                    printer.newLine();
+                    printer.println(`Resolución: ${data.resolucion.resolucion}, Rango desde: ${data.resolucion.rangoinicial} hasta ${data.resolucion.rangofinal}, Prefijo: ${data.resolucion.prefijo}, Vigencia: ${data.resolucion.fechafin}`);
+                    printer.println(`CUFE: ${data.cufe || 'fe9c733f32770f5fcc4ef954f9ef663c54c752e6c07bdc144bb00627faadf9f648818da3e96ef8293547140fb1970d22'}`);
+                    printer.newLine();
+                    printer.newLine();
                 }
 
                 // ===============================
@@ -275,8 +281,11 @@ export class printService implements IPrintService{
                 // ===============================
                 printer.alignCenter();
                 printer.setTypeFontB();
-                printer.println("Gracias por su compra");
-                printer.println("J2 Software POS");
+                printer.println("Generado por J2 Software POS punto de venta");
+                printer.println("https://www.j2softwarepos.com");
+                printer.println("NIT: 1094912099-5");
+
+                esEfectivo?printer.openCashDrawer():'';
                 printer.cut();
             }, resolve, reject, nameShare); //pasamos la promesa
         });

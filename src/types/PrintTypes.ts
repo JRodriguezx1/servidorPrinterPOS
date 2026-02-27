@@ -114,7 +114,7 @@ interface InvoiceData {
   fechaPago: string;
   caja: string;
   vendedor: string;
-  consumidorfinal: ConsumidorFinal;
+  consumidorFinal: ConsumidorFinal;
   cliente: Cliente;
   tipoventa: string;
   subtotal: string;
@@ -124,6 +124,8 @@ interface InvoiceData {
   total: string;
   observacion: string;
   resolucion: Resolution;
+  cufe?: string;
+  link?: string;
   items: ItemFactura[];
   mediospago: MedioPago[];
 }
