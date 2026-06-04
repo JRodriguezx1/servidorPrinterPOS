@@ -27,8 +27,6 @@ export class RouterApp {
         const publicPath = path.join(__dirname, '../views');
         //definir todas las rutas
         router.get('/', (req, res)=>{
-            //res.json('lupe lulu');
-            //res.send('lupelulu');
             res.sendFile(publicPath+"/index.html");
         });
 
@@ -37,15 +35,18 @@ export class RouterApp {
         router.get('/api/printPOS/listPrinter', printController.listPrinter);
         router.get('/api/printPOS/testPrinter/:nameShare', printController.testPrinter);  //ruta visitada por el cliente local
         router.get('/api/printPOS/viewLog', printController.viewLog);  //ruta visitada por el cliente local
-        router.post('/api/printPOS/ticket1/:nameShare', printController.ticket1);
+        router.post('/api/printPOS/ticketInvoice/:nameShare', printController.ticketInvoice);
         router.get('/api/printPOS/openCashDrawer/:nameShare', printController.openCashDrawer);
         router.get('/api/printPOS/statushardware/:nameShare', printController.statushardware);
-        router.post('/api/printPOS/printer', printController.printTicket);
+        router.post('/api/printPOS/ticketCredito/:nameShare', printController.ticketCredito);
         //Rutas de archivos
         router.get('/api/file/downloadFileLogo', fileController.downloadFileLogo);
         //Ruta de cuenta
         router.post('/api/cuenta/create', cuentaController.createCuenta);
         router.get('/api/cuenta/getCuenta', cuentaController.getCuenta);
+        router.get('/api/cuenta/getStatus', cuentaController.getStatus); //ruta consultada periódicamente desde index.ts para validar el estado de la conexión con el broker y del registro.
+        router.get('/api/cuenta/restartConnection', cuentaController.restartConnection); //ruta para reiniciar la conexión con el broker, puede ser útil para intentar reconectar en caso de que se pierda la conexión o el registro por algún motivo, o para refrescar el registro en caso de que se actualice la cuenta o se cree una nueva cuenta.
+
 
 
         //Rutas user

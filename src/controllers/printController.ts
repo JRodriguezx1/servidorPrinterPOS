@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { printService } from "@services/printService";
-import { IPrintService, Print, PrintResponse } from 'types/PrintTypes';
+import { InvoiceData, IPrintService, PrintResponse } from 'types/PrintTypes';
 
 
 const printerService:IPrintService = new printService();
@@ -11,7 +11,6 @@ export class printController {
         const devices = await printerService.list();
         res.json(devices);
     }
-
 
     static listPrinter = async(req:Request, res:Response)=>{
         const list = await printerService.listPrinter();
@@ -30,12 +29,11 @@ export class printController {
         res.json(log);
     }
 
-    static ticket1  = async(req:Request, res:Response)=>{
+    static ticketInvoice = async(req:Request, res:Response)=>{
         const {nameShare} = req.params;
         if(Array.isArray(nameShare))return res.status(400).json({ message: "Nombre compartido inválido" });
         try {
-            console.log(req.body);
-            const response = await printerService.ticket1(nameShare, req.body);
+            const response = await printerService.ticketInvoice(nameShare, req.body);
             res.json(response);
         } catch (error) {
             res.json(error);
@@ -57,11 +55,13 @@ export class printController {
         res.json(response);
     }
 
-    static printTicket  = async(req:Request, res:Response)=>{
-        const lineas:Print = req.body;
+    static ticketCredito  = async(req:Request, res:Response)=>{
+        const invlice:InvoiceData = req.body;
+        const {nameShare} = req.params;
+        if(Array.isArray(nameShare))return res.status(400).json({ message: "Nombre compartido inválido" });
         const devices =  await printerService.list();
         if(devices.ok){
-            const device = await printerService.printPOS(lineas);
+            const device = await printerService.ticketCredito(nameShare, invlice);
             res.json(device);
         }
     }

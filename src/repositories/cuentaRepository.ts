@@ -30,13 +30,16 @@ export class cuentaRepository implements ICuentaRepository{
 
     async leerJSON_DB():Promise<Cuenta | null>{
         try {
+            // Verificamos si el archivo existe
             await fs.access(this.filePath);
             const fileData = await fs.readFile(this.filePath, 'utf-8');
-            return JSON.parse(fileData);
+            return JSON.parse(fileData) as Cuenta;
         } catch (error) {
-            console.error("Error al leer JSON DB:", error);
-            return null;
-        }   
+            if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+                return null;
+            }
+            throw error;
+        }
     }
 
 

@@ -3,7 +3,9 @@ import { Repository } from './RepositoryTypes';
 interface Cuenta{
     id:string,
     nombreCuenta:string,
+    sucursal:string,
     password:string,
+    //devicePOS?:string[],
     //verifyPassword(password:string):Promise<boolean>,  //metodo construido en el modelo esquema user de mongoo
     createdAt: Date;
 }

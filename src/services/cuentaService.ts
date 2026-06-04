@@ -29,6 +29,7 @@ export class cuentaService implements ICuentaService{  //aqui me implelemta esta
         return result;  //si el hash falla igual se devuelve un rechazo
     }
 
+
     async findAll(): Promise<Cuenta[]> {
         return [];
     }
@@ -45,12 +46,14 @@ export class cuentaService implements ICuentaService{  //aqui me implelemta esta
 
     private validar(data: Cuenta): void {
         if (!data.nombreCuenta?.trim())throw new Error("Nombre requerido");
+        if (!data.sucursal?.trim())throw new Error("Sucursal requerida");
         if (!data.password)throw new Error("Password requerido");
     }
 
     
+    //esta ruta viene de index.ts para obtener datos de la cuenta
     public async getCuenta(): Promise<Cuenta | null> {
-        const existe:Cuenta | null = await this.cuentaRepository.leerJSON_DB();
+        const existe:Cuenta|null = await this.cuentaRepository.leerJSON_DB();
         return existe;
     }
 

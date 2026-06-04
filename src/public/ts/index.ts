@@ -1,11 +1,13 @@
 const selectPrinter = document.querySelector('#selectPrinter') as HTMLSelectElement;
 const formSelectPrinter = document.querySelector('#formSelectPrinter') as HTMLFormElement;
 const logs = document.querySelector('#logs') as HTMLDivElement;
-const vaciarCola = document.querySelector('#vaciarCola') as HTMLButtonElement;
+const reiniciar = document.querySelector('#reiniciar') as HTMLButtonElement;
 const logo = document.querySelector('#logo') as HTMLButtonElement;
 const iniciarSesion = document.querySelector('#iniciarSesion') as HTMLButtonElement;
 const miDialogoIniciarSesion = document.querySelector('#miDialogoIniciarSesion') as any;
 const formInicioSesion = document.querySelector('#formInicioSesion') as HTMLFormElement;
+const estado = document.getElementById("statusBroker");
+const clientRegistered = document.getElementById("clientRegistered");
 
 
 interface printerPOS { Name:string, ShareName:string };
@@ -31,15 +33,66 @@ function printPrinterPOS(printers:printerPOS[]){
 
 
 (async ()=>{
+    statusConexionBroker();
     try {
-        const url = "/api/cuenta/getCuenta"; 
-        const respuesta = await fetch(url); 
+        const url = "/api/cuenta/getCuenta";
+        const respuesta = await fetch(url);
         const resultado = await respuesta.json();
-         document.querySelector('#cuentaText')!.textContent = resultado.nombreCuenta;
+        if (respuesta.status === 404) {
+            console.log(`${resultado.message}. No es posible conectar con broker getaway server`);
+            printLogs({ok:false, jobId:"", message:"Error al obtener cuenta de DB", timestamp:new Date().toISOString()});
+            return;
+        }
+        if(!respuesta.ok)throw new Error("Error inesperado en el servidor");
+        if(resultado.valido){
+            printLogs({ok:true, jobId:"", message:"Cuenta obtenida exitosamente", timestamp:new Date().toISOString()});
+            document.querySelector('#cuentaText')!.textContent = resultado.nombreCuenta;
+        }
     } catch (error) {
         console.log(error);
     }
 })();
+
+
+function statusConexionBroker(){
+    setInterval(
+        async () => {
+            const res = await fetch("/api/cuenta/getStatus");
+            const data = await res.json();
+            if(data.status === "online"){
+                estado!.textContent = "🟢 Conectado";
+            }
+            else if(data.status === "reconnecting"){
+                estado!.textContent = "🟡 Reconectando";
+            }
+            else{
+                estado!.textContent = "🔴 Desconectado";
+            }
+        
+            if(!data.registered){
+                clientRegistered!.textContent = "🔴 Cliente no registrado";
+                //printLogs({ok:false, jobId:"", message:"Cliente no registrado en el broker getaway server", timestamp:new Date().toISOString()});
+            }else{
+                clientRegistered!.textContent = "🟢 Cliente registrado";
+                //printLogs({ok:true, jobId:"", message:"Cliente registrado en el broker getaway server", timestamp:new Date().toISOString()});
+            }
+        }, 3000);
+}
+
+
+reiniciar.addEventListener('click', async()=>{
+    try {
+        const url = "/api/cuenta/restartConnection";
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        estado!.textContent = "🔴 Desconectado";
+        clientRegistered!.textContent = "🔴 Cliente no registrado";
+        printLogs({ok:true, jobId:"", message:resultado.message, timestamp:new Date().toISOString()});
+    } catch (error) {
+        console.log(error);
+        printLogs({ok:false, jobId:"", message:(error as Error).message || "Error al reiniciar conexión", timestamp:new Date().toISOString()});
+    }
+});
 
 
 formInicioSesion.addEventListener('submit', (e:SubmitEvent)=>{

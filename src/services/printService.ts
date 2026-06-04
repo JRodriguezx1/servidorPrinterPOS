@@ -2,7 +2,7 @@ import path, { join } from 'path';
 import  fs from 'fs/promises';  //modulo de archivos con mejora asincrona
 import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
-import { InvoiceData, IPrintService, ListPrintersResponse, Print, DevicePOS, PrintResponse } from "types/PrintTypes";
+import { InvoiceData, IPrintService, ListPrintersResponse, DevicePOS, PrintResponse } from "types/PrintTypes";
 import { ThermalPrinter, PrinterTypes, CharacterSet } from "node-thermal-printer";
 
 //import { Printer } from '@node-escpos/core';
@@ -12,9 +12,12 @@ import { ThermalPrinter, PrinterTypes, CharacterSet } from "node-thermal-printer
 
 interface PrintJob {
     id:string,
-    build: (printer: ThermalPrinter)=>void,  //el campo build es una funcion
+    build: (printer: ThermalPrinter)=> Promise<void>|void,  //el campo build es una funcion
     resolve: (value: PrintResponse)=>void,
     reject: (reason: any)=>void,
+    onStarted?:()=>void;
+    onFinished?:()=>void;
+    onFailed?:(err:any)=>void;
 }
 
 export class printService implements IPrintService{
@@ -33,7 +36,6 @@ export class printService implements IPrintService{
             characterSet: CharacterSet.PC852_LATIN2, // Configuración de acentos/eñes
             removeSpecialCharacters: false,
         });
-
         //Diseñamos el ticket 
         printer.alignCenter(); 
         printer.bold(true);
@@ -51,7 +53,6 @@ export class printService implements IPrintService{
         printer.cut();
         // Abrir el cajón monedero
         //printer.openCashDrawer();
-
         try {
             await fs.mkdir(this.filePath, {recursive:true}); // Si ya existe la carpeta, no pasa nada (gracias a recursive: true)
             await printer.execute();
@@ -94,25 +95,9 @@ export class printService implements IPrintService{
 
 
     //TEST DE IMPRESION
-    public async testPrinter(nameShare:string): Promise<PrintResponse>{
+    public async testPrinter(nameShare:string, callbacks?:{onStarted?:()=>void; onFinished?:()=>void; onFailed?:(err:any)=>void;}): Promise<PrintResponse>{
         return new Promise((resolve, reject)=>{
             this.addToQueue((printer)=>{  //guarda funcion con el diseño del ticket
-                /*printer.alignCenter(); 
-                printer.bold(true);
-                printer.setTextSize(2, 2);
-                printer.println("PRUEBA DE IMPRESION");
-                printer.clear();
-                printer.bold(false);
-                printer.setTextSize(1, 1);
-                printer.setTypeFontB();
-                printer.alignLeft();
-                printer.println("Servidor de impresion node - v1.0.0"); 
-                //printer.drawLine(); 
-                printer.alignLeft(); 
-                printer.println("Test de impresion basico"); 
-                printer.newLine();
-                printer.println("J2 Software POS Multisucursal."); 
-                printer.cut();*/
                 printer.clear();
                 // 1. Reset total de estilos
                 printer.setTextNormal(); 
@@ -128,7 +113,7 @@ export class printService implements IPrintService{
                 printer.newLine();
                 printer.println("J2 Software POS Multisucursal."); 
                 printer.cut();
-            }, resolve, reject, nameShare); //pasamos la promesa
+            }, resolve, reject, nameShare, callbacks); //pasamos la promesa
         });
     }
 
@@ -142,11 +127,10 @@ export class printService implements IPrintService{
 
 
 
-    async ticket1(nameShare:string, data:InvoiceData): Promise<PrintResponse>{
+    async ticketInvoice(nameShare:string, data:InvoiceData, callbacks?:{onStarted?:()=>void; onFinished?:()=>void; onFailed?:(err:any)=>void;}): Promise<PrintResponse>{
         let esEfectivo = false;
         return new Promise((resolve, reject)=>{
             this.addToQueue(async (printer)=>{  //guarda funcion con el diseño del ticket
-    
                 // ===============================
                 // LOGO
                 // ===============================
@@ -220,7 +204,7 @@ export class printService implements IPrintService{
                     printer.alignCenter();
                     printer.println(item.nombreproducto);
                     printer.tableCustom([
-                        { text: item.cantidad.toString(), align: "LEFT", width: 0.25 },
+                        { text: item.stock.toString(), align: "LEFT", width: 0.25 },
                         { text: `$${item.valorunidad}`, align: "LEFT", width: 0.3 },
                         //{ text: '$5.000', align: "RIGHT", width: 0.2 },
                         { text: `$${item.total.toLocaleString()}`, align: "RIGHT", width: 0.3 },
@@ -263,7 +247,6 @@ export class printService implements IPrintService{
                 printer.println(`Recibido: $30.000`);
                 printer.println(`Cambio: $5.000`);*/
 
-
                 // ===============================
                 // INFO DE RESOLUCION DE FACTURACION ELECTRONICA DE VENTA SI APLICA
                 // ===============================
@@ -275,7 +258,6 @@ export class printService implements IPrintService{
                     printer.newLine();
                     printer.newLine();
                 }
-
                 // ===============================
                 // FOOTER
                 // ===============================
@@ -287,18 +269,21 @@ export class printService implements IPrintService{
 
                 esEfectivo?printer.openCashDrawer():'';
                 printer.cut();
-            }, resolve, reject, nameShare); //pasamos la promesa
+            }, resolve, reject, nameShare, callbacks); //pasamos la promesa
         });
     }
 
 
     //Funcion para añadir a cola, addToQueue ahora acepta los callbacks de la promesa 3 parametros como funciones
-    private addToQueue(builder: (printer: ThermalPrinter)=>void, resolve: (value: PrintResponse)=>void, reject: (reason: any)=>void, nameShare:string):PrintJob{
+    private addToQueue(builder: (printer: ThermalPrinter)=>void, resolve: (value: PrintResponse)=>void, reject: (reason: any)=>void, nameShare:string, callbacks?: { onStarted?: () => void; onFinished?: () => void; onFailed?: (error: any) => void }):PrintJob{
         const job:PrintJob = { 
             id: Date.now()+'', 
             build: builder,
             resolve,  //se guarda la referencia a la funcion resolve
-            reject 
+            reject,
+            onStarted: callbacks?.onStarted,
+            onFinished: callbacks?.onFinished,
+            onFailed: callbacks?.onFailed
         };
         this.queue.push(job); //en el campo build guarda funcion con el diseño del ticket y los callbacks de las promesas
         this.processQueue(nameShare);
@@ -307,7 +292,6 @@ export class printService implements IPrintService{
 
 
     private async processQueue(nameShare:string) {
-
         if (this.isPrinting || this.queue.length === 0) return;
         this.isPrinting = true;
 
@@ -317,9 +301,9 @@ export class printService implements IPrintService{
             return;
         }
 
+        job.onStarted && job.onStarted();
         const ticketFile = path.join(this.filePath, `ticket-${job.id}.bin`);
         const printerPath = "\\\\localhost\\"+nameShare;
-
         try {
             let printer = new ThermalPrinter({
                     type: PrinterTypes.EPSON,  // O PrinterTypes.STAR
@@ -350,6 +334,7 @@ export class printService implements IPrintService{
             // --- ÉXITO ---
             job.resolve(res);  //Llamamos a la función resolve que guardamos antes y le pasamos PrintResponse
             this.bufferLog[0] = res;
+            job.onFinished && job.onFinished();
 
         } catch (er) {
             console.log('Error crítico en el proceso de impresión>>', er);
@@ -360,6 +345,7 @@ export class printService implements IPrintService{
                 timestamp: new Date()
             }
                 job.reject(res); // Resolvemos con ok: false para indicar fallo controlado
+                job.onFailed && job.onFailed(er);
                 this.bufferLog[0] = res;
         }finally{
             try {
@@ -446,7 +432,7 @@ export class printService implements IPrintService{
         });
     }*/
 
-    async printPOS(print: Print): Promise<any> {
+    async ticketCredito(nameShare: string, print: InvoiceData): Promise<any> {
 
         
        

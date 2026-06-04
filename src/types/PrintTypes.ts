@@ -1,14 +1,5 @@
-import { Repository } from "./RepositoryTypes"
+//import { Repository } from "./RepositoryTypes"
 
-//interfaz para imprimir la data
-interface Print {
-    titulo:string,
-    lineas: string[],
-    qr:string,
-    fecha:string,
-    subtotal:string,
-    total:string
-}
 
 //interfaz para obtener las impresoras "dispositivos"
 interface DevicePOS {
@@ -28,6 +19,16 @@ interface PrintResponse {
     jobId: string;
     message: string;
     timestamp: Date;
+}
+
+interface BrokerMessage {
+    type: string;
+    payload: {
+        jobId: string;
+        printerName: string;
+        tipoTicket: string;
+        content: InvoiceData;
+    }
 }
 
 //========================================================================================
@@ -66,7 +67,11 @@ interface ItemFactura {
   foto: string;
   costo: string;
   valorunidad: string;
-  cantidad: number;
+  stock: number;
+  promediostock: number;
+  prioridadcomision: string;
+  percentcomision: number;
+  valorcomision: number;
   subtotal: number;
   base: number;
   impuesto: string;
@@ -102,10 +107,12 @@ interface Resolution {
 }
 interface InvoiceData {
   negocio: string;
+  sucursal: string;
   nit: string;
   direccion: string;
   telefono: string;
   email: string;
+  www: string;
   num_orden: number;
   tipoFactura: string;
   textFactura: string;
@@ -131,27 +138,27 @@ interface InvoiceData {
 }
 
 //interfaz del repositorio
-interface IPrintRepository extends Repository<Print>{
+/*interface IPrintRepository extends Repository<Print>{
     findPending(): Promise<Print[]>;
-}
+}*/
 
 //interfaz del servicio
 interface IPrintService {
     list():Promise<ListPrintersResponse>,
     listPrinter():Promise<ListPrintersResponse>;
-    testPrinter(nameShare:string):Promise<PrintResponse>,
+    testPrinter(nameShare:string, callbacks?: { onStarted?: () => void; onFinished?: () => void; onFailed?: (error: any) => void }):Promise<PrintResponse>,
     viewLog():Promise<PrintResponse|null>,
-    ticket1(nameShare:string, data:InvoiceData):Promise<PrintResponse>,
+    ticketInvoice(nameShare:string, data:InvoiceData, callbacks?: { onStarted?: () => void; onFinished?: () => void; onFailed?: (error: any) => void }):Promise<PrintResponse>,
     openCashDrawer(nameShare:string):Promise<boolean>,
     statushardware(nameShare:string):Promise<PrintResponse>,
-    printPOS(print: Print):Promise<any>,
+    ticketCredito(nameShare: string, data: InvoiceData):Promise<any>,
 }
 
 export{
-    Print,
     PrintResponse,
     DevicePOS,
     ListPrintersResponse,
+    BrokerMessage,
     InvoiceData,
     IPrintService
 }
