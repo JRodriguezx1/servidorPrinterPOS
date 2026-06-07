@@ -40,12 +40,12 @@ function printPrinterPOS(printers:printerPOS[]){
         const resultado = await respuesta.json();
         if (respuesta.status === 404) {
             console.log(`${resultado.message}. No es posible conectar con broker getaway server`);
-            printLogs({ok:false, jobId:"", message:"Error al obtener cuenta de DB", timestamp:new Date().toISOString()});
+            printLogs({ok:false, jobId:"", message:"Error al obtener cuenta de DB", timestamp:new Date().toLocaleString()});
             return;
         }
         if(!respuesta.ok)throw new Error("Error inesperado en el servidor");
         if(resultado.valido){
-            printLogs({ok:true, jobId:"", message:"Cuenta obtenida exitosamente", timestamp:new Date().toISOString()});
+            printLogs({ok:true, jobId:"", message:"Cuenta obtenida exitosamente", timestamp:new Date().toLocaleString()});
             document.querySelector('#cuentaText')!.textContent = resultado.nombreCuenta;
         }
     } catch (error) {
@@ -71,10 +71,10 @@ function statusConexionBroker(){
         
             if(!data.registered){
                 clientRegistered!.textContent = "🔴 Cliente no registrado";
-                //printLogs({ok:false, jobId:"", message:"Cliente no registrado en el broker getaway server", timestamp:new Date().toISOString()});
+                //printLogs({ok:false, jobId:"", message:"Cliente no registrado en el broker getaway server", timestamp:new Date().toLocaleString()});
             }else{
                 clientRegistered!.textContent = "🟢 Cliente registrado";
-                //printLogs({ok:true, jobId:"", message:"Cliente registrado en el broker getaway server", timestamp:new Date().toISOString()});
+                //printLogs({ok:true, jobId:"", message:"Cliente registrado en el broker getaway server", timestamp:new Date().toLocaleString()});
             }
         }, 3000);
 }
@@ -87,10 +87,10 @@ reiniciar.addEventListener('click', async()=>{
         const resultado = await respuesta.json();
         estado!.textContent = "🔴 Desconectado";
         clientRegistered!.textContent = "🔴 Cliente no registrado";
-        printLogs({ok:true, jobId:"", message:resultado.message, timestamp:new Date().toISOString()});
+        printLogs({ok:true, jobId:"", message:resultado.message, timestamp:new Date().toLocaleString()});
     } catch (error) {
         console.log(error);
-        printLogs({ok:false, jobId:"", message:(error as Error).message || "Error al reiniciar conexión", timestamp:new Date().toISOString()});
+        printLogs({ok:false, jobId:"", message:(error as Error).message || "Error al reiniciar conexión", timestamp:new Date().toLocaleString()});
     }
 });
 
@@ -98,11 +98,12 @@ reiniciar.addEventListener('click', async()=>{
 formInicioSesion.addEventListener('submit', (e:SubmitEvent)=>{
     e.preventDefault();
     const cuenta = formInicioSesion.elements.namedItem("nombreCuenta") as HTMLInputElement;
+    const sucursal = formInicioSesion.elements.namedItem("sucursal") as HTMLInputElement;
     const password = formInicioSesion.elements.namedItem("password") as HTMLInputElement;
-    guardarCuentaDB({nombreCuenta:cuenta.value, password:password.value});
+    guardarCuentaDB({nombreCuenta:cuenta.value, sucursal:sucursal.value, password:password.value});
 });
 
-const guardarCuentaDB = async(cuenta:{nombreCuenta:string, password:string}):Promise<void>=>{
+const guardarCuentaDB = async(cuenta:{nombreCuenta:string, sucursal:string, password:string}):Promise<void>=>{
     try {
         const url = "/api/cuenta/create"; //llamado a la API REST
         const respuesta = await fetch(url, {
@@ -112,12 +113,12 @@ const guardarCuentaDB = async(cuenta:{nombreCuenta:string, password:string}):Pro
         });
         const resultado = await respuesta.json();
         if (resultado.valido !== undefined && !resultado?.valido) throw new Error(resultado.message || "Error al crear cuenta");
-        printLogs({ok:true, message:"Cuenta creada exitosamente", timestamp:new Date().toISOString(), jobId:""});
+        printLogs({ok:true, message:"Cuenta creada exitosamente", timestamp:new Date().toLocaleString(), jobId:""});
         document.querySelector('#cuentaText')!.textContent = cuenta.nombreCuenta;
         formInicioSesion.reset();
     } catch (error) {
         console.log(error);
-        printLogs({ok:false, message:(error as Error).message || "Error al crear cuenta", timestamp:new Date().toISOString(), jobId:""});
+        printLogs({ok:false, message:(error as Error).message || "Error al crear cuenta", timestamp:new Date().toLocaleString(), jobId:""});
     }
     miDialogoIniciarSesion.close();
 }
@@ -152,6 +153,7 @@ async function testhardware(printerShare:string):Promise<void>{
 
 
 function printLogs(resultado:{ ok:boolean, jobId:string, message:string, timestamp:string }):void{
+    console.log(resultado);
     const div = document.createElement('div');
     const ok_Text = document.createElement('p');
     const jobId_Text = document.createElement('p');
@@ -160,8 +162,8 @@ function printLogs(resultado:{ ok:boolean, jobId:string, message:string, timesta
 
     ok_Text.classList.add('text-gray-400', 'text-xs');
     jobId_Text.classList.add('text-indigo-300');
-    message_Text.className = resultado.ok?'text-emerald-400':'text-red-400';
-    timestamp_Text.classList.add('text-gray-400', 'text-xs');
+    message_Text.className = resultado.ok?'text-emerald-400 text-lg':'text-red-400 text-lg';
+    timestamp_Text.classList.add('text-gray-400', 'text-sm');
 
     message_Text.textContent = resultado.message;
     timestamp_Text.textContent = resultado.timestamp;

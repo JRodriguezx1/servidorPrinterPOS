@@ -1,5 +1,6 @@
 import path, { join } from 'path';
 import  fs from 'fs/promises';  //modulo de archivos con mejora asincrona
+import sharp from 'sharp';
 import { IFileService } from "types/filesTypes";
 
 export class fileService implements IFileService {
@@ -18,7 +19,10 @@ export class fileService implements IFileService {
         // Guardamos el archivo en la carpeta temporal
         await fs.mkdir(join(process.cwd(), "downloads"), { recursive: true });
         const destPath = join(process.cwd(), "downloads", "logo.png");
-        await fs.writeFile(destPath, buffer);
+
+        await sharp(buffer).resize({width: 300, withoutEnlargement: true}).flatten({background: "#FFFFFF"}).grayscale().png().toFile(destPath);
+
+        //await fs.writeFile(destPath, buffer);
         return true;
     }
     

@@ -57,7 +57,7 @@ export class BrokerClient {
     private reconnect() {
         if(this.reconnecting)return;
         this.reconnecting = true;
-        console.log("Reconectando...");
+        console.log("Reconectandox...");
         setTimeout(() => {
             this.reconnecting = false;
             this.connect();

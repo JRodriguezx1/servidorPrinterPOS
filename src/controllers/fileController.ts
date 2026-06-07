@@ -17,10 +17,10 @@ export class fileController {
             if (!cuenta)
                 return res.status(404).json({ valido:false, message: "Cuenta no encontrada" });
             await fileServiceInstance.downloadFileLogo(cuenta.nombreCuenta);
-            return res.json({message:"Archivo descargado correctamente"});
+            return res.json({ok: true, message:"Archivo descargado correctamente"});
         } catch (error) {
             console.error(error);
-            res.status(500).json({message:"Error al descargar el archivo"});
+            res.status(500).json({ok: false, message:"Error al descargar el archivo"});
         }
 
     }
