@@ -46,7 +46,7 @@ function printPrinterPOS(printers:printerPOS[]){
         if(!respuesta.ok)throw new Error("Error inesperado en el servidor");
         if(resultado.valido){
             printLogs({ok:true, jobId:"", message:"Cuenta obtenida exitosamente", timestamp:new Date().toLocaleString()});
-            document.querySelector('#cuentaText')!.textContent = resultado.nombreCuenta;
+            document.querySelector('#cuentaText')!.textContent = resultado.data.nombreCuenta;
         }
     } catch (error) {
         console.log(error);

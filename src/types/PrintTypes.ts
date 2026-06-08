@@ -67,7 +67,8 @@ interface ItemFactura {
   foto: string;
   costo: string;
   valorunidad: string;
-  stock: number;
+  cantidad: number;
+  stock?: number;
   promediostock: number;
   prioridadcomision: string;
   percentcomision: number;

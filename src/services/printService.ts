@@ -204,7 +204,7 @@ export class printService implements IPrintService{
                     printer.alignCenter();
                     printer.println(item.nombreproducto);
                     printer.tableCustom([
-                        { text: item.stock.toString(), align: "LEFT", width: 0.25 },
+                        { text: item.stock?.toString()||item.cantidad.toString(), align: "LEFT", width: 0.25 },
                         { text: `$${item.valorunidad}`, align: "LEFT", width: 0.3 },
                         //{ text: '$5.000', align: "RIGHT", width: 0.2 },
                         { text: `$${item.total.toLocaleString()}`, align: "RIGHT", width: 0.3 },
