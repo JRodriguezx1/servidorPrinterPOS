@@ -1,7 +1,7 @@
 {
   "nombreCuenta": "demo",
   "sucursal": "Sede centro",
-  "password": "$argon2id$v=19$m=65536,t=3,p=4$HNOhbQDTPkU50A0i1DnW9w$BxNcnlW2hMjnAuGd7ldrvsZJecKIDOUshzbzRHGFygs",
-  "id": "c9c384df-d240-48ff-a74f-91aa31f37c9b",
-  "createdAt": "2026-06-07T16:27:45.534Z"
+  "password": "$argon2id$v=19$m=65536,t=3,p=4$7xqJrAJJz9gkKHqtblQAkQ$4LRNLdpB+IgSkWPeXFXs6DvJ9iMNsKrphYlG39DdLsE",
+  "id": "97f22066-aadd-4c1d-bbd9-773feb4bf3be",
+  "createdAt": "2026-06-08T01:44:02.200Z"
 }

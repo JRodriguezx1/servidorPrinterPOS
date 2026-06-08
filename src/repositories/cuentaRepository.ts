@@ -33,6 +33,7 @@ export class cuentaRepository implements ICuentaRepository{
             // Verificamos si el archivo existe
             await fs.access(this.filePath);
             const fileData = await fs.readFile(this.filePath, 'utf-8');
+            if (!fileData.trim())return null;
             return JSON.parse(fileData) as Cuenta;
         } catch (error) {
             if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -49,6 +50,7 @@ export class cuentaRepository implements ICuentaRepository{
             if (!fileExists) return null; //si no existe es porque no hay cuentas creadas, entonces se devuelve null
 
             const fileData = await fs.readFile(this.filePath, 'utf-8');
+            if (!fileData.trim()) return null;
             const cuenta:Cuenta = JSON.parse(fileData);
             const arraycuenta:[string, string][] = Object.entries(query); // = [["nombreCuenta", "valor"], ["password", "valor"]]
 
