@@ -47,6 +47,8 @@
     "@repositories": "dist/repositories",
     "@models": "dist/models",
     "@routes": "dist/routes",
-    "@middlewares": "dist/middlewares"
+    "@middlewares": "dist/middlewares",
+    "@dependencies": "dist/dependencies",
+    "@websocket": "dist/websocket"
   }
 }
